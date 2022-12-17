@@ -10,7 +10,7 @@ namespace TcCodeFormatter
 		static List<XmlNode> implementations;
 		static void Main(string[] args)
 		{
-			string filePath = new string("C:\\Projects\\CSharp\\TcCodeFormatter\\FB_StringBuilder.TcPOU");
+			string filePath = new string("C:\\Projects\\CSharp\\TcCodeFormatter\\POUs\\FB_StringBuilder.TcPOU");
 
 			FileFormatter fileFormatter = new FileFormatter(filePath);
 
