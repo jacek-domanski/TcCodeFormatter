@@ -7,8 +7,6 @@ namespace TcCodeFormatter
 	class FileFormatter
 	{
 		private XmlDocument document = new XmlDocument();
-		List<XmlNode> declarations = new List<XmlNode>();
-		List<XmlNode> implementations = new List<XmlNode>();
 
 		public FileFormatter(string filePath)
 		{
@@ -17,61 +15,34 @@ namespace TcCodeFormatter
 
 		public void formatCode()
 		{
-			addDeclarationsAndImplementations(this.document.DocumentElement);
-
-			Console.WriteLine("Declarations count: " + this.declarations.Count);
-
-			foreach (XmlNode declaration in this.declarations)
-			{
-				string[] lines = splitNodeTextIntoLines(declaration);
-
-				foreach (string line in lines)
-				{
-					Console.WriteLine(line);
-				}
-
-				Console.WriteLine("============================================");
-			}
-
-			Console.WriteLine("Implementations count: " + this.implementations.Count);
-
-			foreach (XmlNode implementation in this.implementations)
-			{
-				string[] lines = splitNodeTextIntoLines(implementation);
-				foreach (string line in lines)
-				{
-					Console.WriteLine(line);
-				}
-
-				Console.WriteLine("============================================");
-			}
+			formatDeclarationsAndImplementations(this.document.DocumentElement);
 		}
 
-		private void addDeclarationsAndImplementations(XmlNode node)
+		private void formatDeclarationsAndImplementations(XmlNode node)
 		{
 			string declarationName = "Declaration";
 			string implementationName = "Implementation";
 
 			if (node.Name == declarationName)
 			{
-				this.declarations.Add(node);
-			} else if (node.Name == implementationName && node.FirstChild.Name == "ST")
+				DeclarationFormatter.Instance.format(node);
+			} else if (node.Name == implementationName && isImplementationLanguageSt(node))
 			{
-				this.implementations.Add(node.FirstChild);
+				ImplementationFormatter.Instance.format(node.FirstChild);
 			}
 
 			if (node.HasChildNodes)
 			{
 				foreach(XmlNode child in node.ChildNodes)
 				{
-					addDeclarationsAndImplementations(child);
+					formatDeclarationsAndImplementations(child);
 				}
 			}
 		}
 
-		private string[] splitNodeTextIntoLines(XmlNode node)
+		private bool isImplementationLanguageSt(XmlNode node)
 		{
-			return node.InnerText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+			return node.FirstChild.Name == "ST";
 		}
 	}
 }

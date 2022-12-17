@@ -6,17 +6,17 @@ namespace TcCodeFormatter
 {
 	class Program
 	{
-		static List<XmlNode> declarations;
-		static List<XmlNode> implementations;
 		static void Main(string[] args)
 		{
-			string filePath = new string("C:\\Projects\\CSharp\\TcCodeFormatter\\POUs\\FB_StringBuilder.TcPOU");
+			string[] filesPaths = new[] { "C:\\Projects\\CSharp\\TcCodeFormatter\\POUs\\FB_StringBuilder.TcPOU" };
 
-			FileFormatter fileFormatter = new FileFormatter(filePath);
+			FileFormatter fileFormatter = null;
 
-			fileFormatter.formatCode();
-
-
+			foreach (string filePath in filesPaths)
+			{
+				fileFormatter = new FileFormatter(filePath);
+				fileFormatter.formatCode();
+			}
 		}
 	}
 }
