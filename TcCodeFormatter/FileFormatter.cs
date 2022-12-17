@@ -18,6 +18,11 @@ namespace TcCodeFormatter
 			formatDeclarationsAndImplementations(this.document.DocumentElement);
 		}
 
+		public void save(string filePath)
+		{
+			document.Save(filePath);
+		}
+
 		private void formatDeclarationsAndImplementations(XmlNode node)
 		{
 			string declarationName = "Declaration";

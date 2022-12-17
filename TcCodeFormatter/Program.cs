@@ -16,6 +16,7 @@ namespace TcCodeFormatter
 			{
 				fileFormatter = new FileFormatter(filePath);
 				fileFormatter.formatCode();
+				fileFormatter.save(filePath + "2");
 			}
 		}
 	}

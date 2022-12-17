@@ -8,12 +8,16 @@ namespace TcCodeFormatter
 	{
 		public void format(XmlNode node)
 		{
-			string[] lines = splitNodeTextIntoLines(node);
+			string[] oldLines = splitNodeTextIntoLines(node);
+			List<string> newLines = new List<string>();
 
-			foreach (string line in lines)
+			foreach (string oldLine in oldLines)
 			{
-				Console.WriteLine(line);
+				newLines.Add(oldLine + " // dupa");
+				Console.WriteLine(newLines[newLines.Count-1]);
 			}
+
+			node.InnerText = string.Join("\n", newLines);
 
 			Console.WriteLine("============================================");
 		}
