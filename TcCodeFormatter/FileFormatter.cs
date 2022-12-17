@@ -30,10 +30,10 @@ namespace TcCodeFormatter
 
 			if (node.Name == declarationName)
 			{
-				DeclarationFormatter.Instance.format(node);
+				DeclarationFormatter.Instance.run(node);
 			} else if (node.Name == implementationName && isImplementationLanguageSt(node))
 			{
-				ImplementationFormatter.Instance.format(node.FirstChild);
+				ImplementationFormatter.Instance.run(node.FirstChild);
 			}
 
 			if (node.HasChildNodes)
