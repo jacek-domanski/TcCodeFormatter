@@ -45,31 +45,37 @@ namespace TcCodeFormatter
 		}
 		private void splitUnknownSegment(int segmentIndex)
 		{
-			// TODO refactor this method
+			// TODO write tests
 			// TODO handle if already in special segment
-
 			string segmentText = this.segments[segmentIndex].Text;
-			Dictionary<SegmentType, SpecialSegment> specialSegments = 
+			Dictionary<SegmentType, SpecialSegment> specialSegments =
 				initializeSpecialSegments();
-			findSpecialSegmentsStartingIndexes(segmentText, specialSegments);
+			findOutIfSegmentContainsSpecialSegments(segmentText, specialSegments);
 
-			int specialSegmentStartIndex = segmentText.Length;
-			SegmentType firstSegmentType = SegmentType.Unkown;
-			foreach (SegmentType segmentType in specialSegments.Keys)
+			findFirstSpecialSegment(
+				segmentText, specialSegments,
+				out int specialSegmentStartIndex, out SegmentType specialSegmentType);
+			splitSegmentBySpecialSegment(
+				segmentIndex, segmentText, specialSegments, specialSegmentStartIndex, specialSegmentType);
+
+		}
+
+		private void splitSegmentBySpecialSegment(
+			int segmentIndex, 
+			string segmentText, 
+			Dictionary<SegmentType, SpecialSegment> specialSegments,
+			int specialSegmentStartIndex, 
+			SegmentType specialSegmentType)
+		{
+			CodeLineSegment code, specialSegment, unknown = null;
+			switch (specialSegmentType)
 			{
-				int thisIndex = specialSegments[segmentType].startingIndex;
-				if (thisIndex < specialSegmentStartIndex && thisIndex > -1)
-				{
-					firstSegmentType = segmentType;
-					specialSegmentStartIndex = thisIndex;
-				}
-			}
-			CodeLineSegment code;
-			switch (firstSegmentType)
-			{
+				case SegmentType.Code:
+					throw new Exception("Segment identified as code too early");
+
 				case SegmentType.Unkown:
 					this.segments[segmentIndex].convertUnknownTypeToCode();
-					break;
+					return;
 
 				case SegmentType.EndlineComment:
 					code =
@@ -77,23 +83,17 @@ namespace TcCodeFormatter
 							segmentText.Substring(0, specialSegmentStartIndex),
 							SegmentType.Code
 						);
-					CodeLineSegment comment =
+					specialSegment =
 						new CodeLineSegment(
 							segmentText.Substring(
-								specialSegmentStartIndex 
-								+ specialSegments[firstSegmentType].start.Length),
-							firstSegmentType
+								specialSegmentStartIndex
+								+ specialSegments[specialSegmentType].start.Length),
+							specialSegmentType
 						);
-
-					this.segments.RemoveAt(segmentIndex);
-					this.segments.Insert(segmentIndex, comment);
-					this.segments.Insert(segmentIndex, code);
 					break;
 
-				case SegmentType.Code:
-					throw new Exception("Segment identified as code too early");
 				default:
-					int specialSegmentEndIndex = segmentText.IndexOf(specialSegments[firstSegmentType].start);
+					int specialSegmentEndIndex = segmentText.IndexOf(specialSegments[specialSegmentType].start);
 
 					code =
 						new CodeLineSegment(
@@ -103,18 +103,18 @@ namespace TcCodeFormatter
 
 					int specialSegmentContentStartIndex =
 						specialSegmentStartIndex
-						+ specialSegments[firstSegmentType].start.Length;
-					CodeLineSegment specialSegment, unknown = null;
+						+ specialSegments[specialSegmentType].start.Length;
 
 					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex < specialSegmentStartIndex)
 					{
 						specialSegment =
 							new CodeLineSegment(
 								segmentText.Substring(specialSegmentContentStartIndex),
-								firstSegmentType
+								specialSegmentType
 							);
-						this.multilineSegment = firstSegmentType;
-					} else
+						this.multilineSegment = specialSegmentType;
+					}
+					else
 					{
 						int specialSegmentContentLength =
 							specialSegmentEndIndex
@@ -125,27 +125,43 @@ namespace TcCodeFormatter
 								segmentText.Substring(
 									specialSegmentContentStartIndex,
 									specialSegmentContentLength),
-								firstSegmentType
+								specialSegmentType
 							);
 
 						unknown =
 							new CodeLineSegment(
-								segmentText.Substring(specialSegmentEndIndex + specialSegments[firstSegmentType].end.Length - 1),
+								segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length - 1),
 								SegmentType.Unkown
 							);
 					}
-
-					this.segments.RemoveAt(segmentIndex);
-					if (unknown != null) this.segments.Insert(segmentIndex, unknown); 
-					this.segments.Insert(segmentIndex, specialSegment);
-					this.segments.Insert(segmentIndex, code);
-
 					break;
 			}
-			
-	}
+			this.segments.RemoveAt(segmentIndex);
+			if (unknown != null) this.segments.Insert(segmentIndex, unknown);
+			this.segments.Insert(segmentIndex, specialSegment);
+			this.segments.Insert(segmentIndex, code);
+		}
 
-		private void findSpecialSegmentsStartingIndexes(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments)
+		private static void findFirstSpecialSegment(
+			string segmentText, 
+			Dictionary<SegmentType, SpecialSegment> specialSegments, 
+			out int specialSegmentStartIndex, 
+			out SegmentType firstSegmentType)
+		{
+			specialSegmentStartIndex = segmentText.Length;
+			firstSegmentType = SegmentType.Unkown;
+			foreach (SegmentType segmentType in specialSegments.Keys)
+			{
+				int thisIndex = specialSegments[segmentType].startingIndex;
+				if (thisIndex < specialSegmentStartIndex && thisIndex > -1)
+				{
+					firstSegmentType = segmentType;
+					specialSegmentStartIndex = thisIndex;
+				}
+			}
+		}
+
+		private void findOutIfSegmentContainsSpecialSegments(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments)
 		{
 			foreach (SpecialSegment specialSegment in specialSegments.Values)
 			{
