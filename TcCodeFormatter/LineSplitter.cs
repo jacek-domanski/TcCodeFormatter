@@ -45,6 +45,9 @@ namespace TcCodeFormatter
 		}
 		private void splitUnknownSegment(int segmentIndex)
 		{
+			// TODO refactor this method
+			// TODO handle if already in special segment
+
 			string segmentText = this.segments[segmentIndex].Text;
 			Dictionary<SegmentType, SpecialSegment> specialSegments = 
 				initializeSpecialSegments();
