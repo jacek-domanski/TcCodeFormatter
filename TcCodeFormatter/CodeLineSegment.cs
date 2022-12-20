@@ -10,7 +10,7 @@
 		Pragma
 	}
 
-	class CodeLineSegment
+	public class CodeLineSegment
 	{
 		private string text;
 		private SegmentType segmentType;
