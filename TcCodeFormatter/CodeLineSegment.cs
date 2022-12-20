@@ -1,4 +1,6 @@
-﻿namespace TcCodeFormatter
+﻿using System;
+
+namespace TcCodeFormatter
 {
 	public enum SegmentType
 	{
@@ -27,7 +29,7 @@
 		{
 			if (this.segmentType != SegmentType.Unkown)
 			{
-				throw new System.Exception(
+				throw new Exception(
 					"Cannot convert " + segmentType.ToString() + " to code"
 					);
 			}
