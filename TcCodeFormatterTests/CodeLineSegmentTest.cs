@@ -19,21 +19,21 @@ namespace TcCodeFormatterTests
 
 			// Assert
 			Assert.AreEqual(
-				segment1.Text, 
 				"text1", 
+				segment1.Text, 
 				"Segment text changed after instantiation");
 			Assert.AreEqual(
-				segment2.Text, 
 				"text2", 
+				segment2.Text, 
 				"Segment text changed after instantiation");
 
 			Assert.AreEqual(
-				segment1.SegmentType, 
 				SegmentType.Unkown, 
+				segment1.SegmentType, 
 				"Segment type changed after instantiation");
 			Assert.AreEqual(
-				segment2.SegmentType, 
 				SegmentType.EndlineComment, 
+				segment2.SegmentType, 
 				"Segment type changed after instantiation");
 		}
 		[TestMethod]
@@ -48,8 +48,8 @@ namespace TcCodeFormatterTests
 
 			// Assert
 			Assert.AreEqual(
-				segment1.SegmentType,
 				SegmentType.Code,
+				segment1.SegmentType,
 				"Segment type not changed to code");
 		}
 		[TestMethod]

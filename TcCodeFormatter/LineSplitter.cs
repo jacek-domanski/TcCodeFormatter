@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TcCodeFormatter
 {
-	class LineSplitter
+	public class LineSplitter
 	{
 		private SegmentType multilineSegment = SegmentType.Unkown;
 		private List<CodeLineSegment> segments;
