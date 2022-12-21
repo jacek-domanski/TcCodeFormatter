@@ -103,14 +103,17 @@ namespace TcCodeFormatter
 					int specialSegmentEndIndex =
 							segmentText.IndexOf(
 								specialSegments[specialSegmentType].end, 
-								specialSegmentStartIndex+1
+								specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
 							);
 
 					code = AddCodeSegment(segmentText, specialSegmentStartIndex);
 
-					int specialSegmentContentStartIndex =
-						specialSegmentStartIndex
-						+ specialSegments[specialSegmentType].start.Length;
+					int specialSegmentContentStartIndex = specialSegmentStartIndex;
+					if (this.multilineSegment == SegmentType.Unkown)
+					{
+						specialSegmentContentStartIndex +=
+							specialSegments[specialSegmentType].start.Length;
+					}
 
 					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex <= specialSegmentStartIndex)
 					{
