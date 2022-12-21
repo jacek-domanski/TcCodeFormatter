@@ -45,19 +45,29 @@ namespace TcCodeFormatter
 		}
 		private void splitUnknownSegment(int segmentIndex)
 		{
-			// TODO write tests
 			// TODO handle if already in special segment
 			string segmentText = this.segments[segmentIndex].Text;
 			Dictionary<SegmentType, SpecialSegment> specialSegments =
 				initializeSpecialSegments();
-			findOutIfSegmentContainsSpecialSegments(segmentText, specialSegments);
+			int specialSegmentStartIndex;
+			SegmentType specialSegmentType;
 
-			findFirstSpecialSegment(
-				segmentText, specialSegments,
-				out int specialSegmentStartIndex, out SegmentType specialSegmentType);
-			splitSegmentBySpecialSegment(
-				segmentIndex, segmentText, specialSegments, specialSegmentStartIndex, specialSegmentType);
+			if (this.multilineSegment == SegmentType.Unkown)
+			{
+				findOutIfSegmentContainsSpecialSegments(segmentText, specialSegments);
 
+				findFirstSpecialSegment(
+					segmentText, specialSegments,
+					out specialSegmentStartIndex, out specialSegmentType);
+				splitSegmentBySpecialSegment(
+					segmentIndex, segmentText, specialSegments, specialSegmentStartIndex, specialSegmentType);
+			} else
+			{
+				specialSegmentStartIndex = 0;
+				specialSegmentType = this.multilineSegment;
+				splitSegmentBySpecialSegment(
+					segmentIndex, segmentText, specialSegments, specialSegmentStartIndex, specialSegmentType);
+			}
 		}
 
 		private void splitSegmentBySpecialSegment(
@@ -68,6 +78,7 @@ namespace TcCodeFormatter
 			SegmentType specialSegmentType)
 		{
 			CodeLineSegment code, specialSegment, unknown = null;
+			bool bEndNotFound = false;
 			switch (specialSegmentType)
 			{
 				case SegmentType.Code:
@@ -109,6 +120,7 @@ namespace TcCodeFormatter
 								specialSegmentType
 							);
 						this.multilineSegment = specialSegmentType;
+						bEndNotFound = true;
 					}
 					else
 					{
@@ -140,6 +152,7 @@ namespace TcCodeFormatter
 			if (unknown != null) this.segments.Insert(segmentIndex, unknown);
 			this.segments.Insert(segmentIndex, specialSegment);
 			if (code != null) this.segments.Insert(segmentIndex, code);
+			if (!bEndNotFound) this.reset();
 		}
 
 		private static CodeLineSegment AddCodeSegment(string segmentText, int specialSegmentStartIndex)

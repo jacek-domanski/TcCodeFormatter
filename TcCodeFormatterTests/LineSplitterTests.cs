@@ -129,5 +129,49 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual(" comment ", list2[1].Text, "code 2 segment 1 differs from input");
 			Assert.AreEqual(" 5;", list2[2].Text, "code 2 segment 2 differs from input");
 		}
+		[TestMethod]
+		public void Should_setMultilineSegmentToCorrectSegmentType_When_SpecialSegmentEndNotFound()
+		{
+			// Arrange
+			string code1 = "iInt := 5; (* comment starts";
+			string code2 = "comment continues";
+			string code3 = "comment ends *)";
+
+			LineSplitter lineSplitter = new LineSplitter();
+			var multilineSegmentField = lineSplitter
+				.GetType()
+				.GetField(
+					"multilineSegment",
+					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+			// Act
+			List<CodeLineSegment> list1 = lineSplitter.split(code1);
+			// Assert
+			Assert.AreEqual(2, list1.Count, "list 1 is not length 2");
+
+			Assert.AreEqual(SegmentType.Code, list1[0].SegmentType, "code 1 segment 0 type is not code");
+			Assert.AreEqual(SegmentType.MultilineComment, list1[1].SegmentType, "code 1 segment 1 type is not MultilineComment");
+
+			Assert.AreEqual("iInt := 5; ", list1[0].Text, "code 1 segment 0 differs from input");
+			Assert.AreEqual(" comment starts", list1[1].Text, "code 1 segment 0 differs from input");
+
+			Assert.AreEqual(SegmentType.MultilineComment, multilineSegmentField.GetValue(lineSplitter), "Segment type not set to MultilineComment");
+
+			// Act
+			List<CodeLineSegment> list2 = lineSplitter.split(code2);
+			// Assert
+			Assert.AreEqual(1, list2.Count, "list 2 is not length 1");
+			Assert.AreEqual(SegmentType.MultilineComment, list2[0].SegmentType, "code 2 segment 0 type is not MultilineComment");
+			Assert.AreEqual("comment continues", list2[0].Text, "code 2 segment 0 differs from input");
+			Assert.AreEqual(SegmentType.MultilineComment, multilineSegmentField.GetValue(lineSplitter), "Segment type not set to MultilineComment");
+
+			// Act
+			List<CodeLineSegment> list3 = lineSplitter.split(code3);
+			// Assert
+			Assert.AreEqual(1, list3.Count, "list 3 is not length 1");
+			Assert.AreEqual(SegmentType.MultilineComment, list3[0].SegmentType, "code 3 segment 0 type is not MultilineComment");
+			Assert.AreEqual("comment ends ", list3[0].Text, "code 3 segment 0 differs from input");
+			Assert.AreEqual(SegmentType.Unkown, multilineSegmentField.GetValue(lineSplitter), "Segment type not reset to unknown");
+		}
 	}
 }
