@@ -78,11 +78,7 @@ namespace TcCodeFormatter
 					return;
 
 				case SegmentType.EndlineComment:
-					code =
-						new CodeLineSegment(
-							segmentText.Substring(0, specialSegmentStartIndex),
-							SegmentType.Code
-						);
+					code = AddCodeSegment(segmentText, specialSegmentStartIndex);
 					specialSegment =
 						new CodeLineSegment(
 							segmentText.Substring(
@@ -93,19 +89,19 @@ namespace TcCodeFormatter
 					break;
 
 				default:
-					int specialSegmentEndIndex = segmentText.IndexOf(specialSegments[specialSegmentType].start);
+					int specialSegmentEndIndex =
+							segmentText.IndexOf(
+								specialSegments[specialSegmentType].end, 
+								specialSegmentStartIndex+1
+							);
 
-					code =
-						new CodeLineSegment(
-							segmentText.Substring(0, specialSegmentStartIndex),
-							SegmentType.Code
-						);
+					code = AddCodeSegment(segmentText, specialSegmentStartIndex);
 
 					int specialSegmentContentStartIndex =
 						specialSegmentStartIndex
 						+ specialSegments[specialSegmentType].start.Length;
 
-					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex < specialSegmentStartIndex)
+					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex <= specialSegmentStartIndex)
 					{
 						specialSegment =
 							new CodeLineSegment(
@@ -128,18 +124,32 @@ namespace TcCodeFormatter
 								specialSegmentType
 							);
 
-						unknown =
-							new CodeLineSegment(
-								segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length - 1),
-								SegmentType.Unkown
-							);
+						string unknownString = segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length);
+						if (unknownString.Length > 0)
+						{
+							unknown =
+								new CodeLineSegment(
+									unknownString,
+									SegmentType.Unkown
+								);
+						}
 					}
 					break;
 			}
 			this.segments.RemoveAt(segmentIndex);
 			if (unknown != null) this.segments.Insert(segmentIndex, unknown);
 			this.segments.Insert(segmentIndex, specialSegment);
-			this.segments.Insert(segmentIndex, code);
+			if (code != null) this.segments.Insert(segmentIndex, code);
+		}
+
+		private static CodeLineSegment AddCodeSegment(string segmentText, int specialSegmentStartIndex)
+		{
+			if (specialSegmentStartIndex == 0) return null;
+
+			return new CodeLineSegment(
+				segmentText.Substring(0, specialSegmentStartIndex),
+				SegmentType.Code
+			);			
 		}
 
 		private static void findFirstSpecialSegment(

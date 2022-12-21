@@ -65,5 +65,38 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual(" comment", list1[1].Text, "code 1 2nd segment differs from input");
 
 		}
+		[TestMethod]
+		public void Should_returnListWithOneElement_When_splitCalledOnSpecialSegmentWithOtherSegmentsInside()
+		{
+			// Arrange
+			string code1 = "(*iInt := 5; 'string' {pragma} // endline*)";
+			string code2 = "'iInt := 5; (* comment *) {pragma} // endline'";
+			string code3 = "{iInt := 5; (* comment *) 'string' // endline}";
+			string code4 = "//iInt := 5; (* comment *) 'string' {pragma}";
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> list1 = lineSplitter.split(code1);
+			List<CodeLineSegment> list2 = lineSplitter.split(code2);
+			List<CodeLineSegment> list3 = lineSplitter.split(code3);
+			List<CodeLineSegment> list4 = lineSplitter.split(code4);
+
+			// Assert
+			Assert.AreEqual(1, list1.Count, "list 1 is not length 1");
+			Assert.AreEqual(1, list2.Count, "list 2 is not length 1");
+			Assert.AreEqual(1, list3.Count, "list 3 is not length 1");
+			Assert.AreEqual(1, list4.Count, "list 4 is not length 1");
+
+			Assert.AreEqual(SegmentType.MultilineComment, list1[0].SegmentType, "code 1 segment type is not multiline comment");
+			Assert.AreEqual(SegmentType.StringLiteral, list2[0].SegmentType, "code 2 segment type is not multiline comment");
+			Assert.AreEqual(SegmentType.Pragma, list3[0].SegmentType, "code 3 segment type is not multiline comment");
+			Assert.AreEqual(SegmentType.EndlineComment, list4[0].SegmentType, "code 4 segment type is not multiline comment");
+
+			Assert.AreEqual("iInt := 5; 'string' {pragma} // endline", list1[0].Text, "code 1 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) {pragma} // endline", list2[0].Text, "code 2 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) 'string' // endline", list3[0].Text, "code 3 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) 'string' {pragma}", list4[0].Text, "code 4 differs from input");
+
+		}
 	}
 }
