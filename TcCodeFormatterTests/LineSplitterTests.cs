@@ -17,7 +17,7 @@ namespace TcCodeFormatterTests
 				.GetField(
 					"multilineSegment",
 					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-			multilineSegmentField.SetValue(lineSplitter, SegmentType.StringLiteral);
+			multilineSegmentField.SetValue(lineSplitter, SegmentType.StringLiteralSingleQuote);
 
 			// Act
 			lineSplitter.reset();
@@ -69,10 +69,11 @@ namespace TcCodeFormatterTests
 		public void Should_returnListWithOneElement_When_splitCalledOnSpecialSegmentWithOtherSegmentsInside()
 		{
 			// Arrange
-			string code1 = "(*iInt := 5; 'string' {pragma} // endline*)";
-			string code2 = "'iInt := 5; (* comment *) {pragma} // endline'";
-			string code3 = "{iInt := 5; (* comment *) 'string' // endline}";
-			string code4 = "//iInt := 5; (* comment *) 'string' {pragma}";
+			string code1 = "(*iInt := 5; 'string' {pragma} \"string2\" // endline*)";
+			string code2 = "'iInt := 5; (* comment *) {pragma} \"string2\" // endline'";
+			string code3 = "{iInt := 5; (* comment *) 'string' \"string2\" // endline}";
+			string code4 = "//iInt := 5; (* comment *) 'string' {pragma} \"string2\"";
+			string code5 = "\"iInt := 5; (* comment *) 'string' {pragma} // endline\"";
 			LineSplitter lineSplitter = new LineSplitter();
 
 			// Act
@@ -80,22 +81,26 @@ namespace TcCodeFormatterTests
 			List<CodeLineSegment> list2 = lineSplitter.split(code2);
 			List<CodeLineSegment> list3 = lineSplitter.split(code3);
 			List<CodeLineSegment> list4 = lineSplitter.split(code4);
+			List<CodeLineSegment> list5 = lineSplitter.split(code5);
 
 			// Assert
 			Assert.AreEqual(1, list1.Count, "list 1 is not length 1");
 			Assert.AreEqual(1, list2.Count, "list 2 is not length 1");
 			Assert.AreEqual(1, list3.Count, "list 3 is not length 1");
 			Assert.AreEqual(1, list4.Count, "list 4 is not length 1");
+			Assert.AreEqual(1, list5.Count, "list 5 is not length 1");
 
-			Assert.AreEqual(SegmentType.MultilineComment, list1[0].SegmentType, "code 1 segment type is not multiline comment");
-			Assert.AreEqual(SegmentType.StringLiteral, list2[0].SegmentType, "code 2 segment type is not multiline comment");
-			Assert.AreEqual(SegmentType.Pragma, list3[0].SegmentType, "code 3 segment type is not multiline comment");
-			Assert.AreEqual(SegmentType.EndlineComment, list4[0].SegmentType, "code 4 segment type is not multiline comment");
+			Assert.AreEqual(SegmentType.MultilineComment, list1[0].SegmentType, "code 1 segment type is not MultilineComment");
+			Assert.AreEqual(SegmentType.StringLiteralSingleQuote, list2[0].SegmentType, "code 2 segment type is not StringLiteralSingleQuote");
+			Assert.AreEqual(SegmentType.Pragma, list3[0].SegmentType, "code 3 segment type is not Pragma");
+			Assert.AreEqual(SegmentType.EndlineComment, list4[0].SegmentType, "code 4 segment type is not EndlineComment");
+			Assert.AreEqual(SegmentType.StringLiteralDoubleQuote, list5[0].SegmentType, "code 5 segment type is not StringLiteralDoubleQuote");
 
-			Assert.AreEqual("iInt := 5; 'string' {pragma} // endline", list1[0].Text, "code 1 differs from input");
-			Assert.AreEqual("iInt := 5; (* comment *) {pragma} // endline", list2[0].Text, "code 2 differs from input");
-			Assert.AreEqual("iInt := 5; (* comment *) 'string' // endline", list3[0].Text, "code 3 differs from input");
-			Assert.AreEqual("iInt := 5; (* comment *) 'string' {pragma}", list4[0].Text, "code 4 differs from input");
+			Assert.AreEqual("iInt := 5; 'string' {pragma} \"string2\" // endline", list1[0].Text, "code 1 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) {pragma} \"string2\" // endline", list2[0].Text, "code 2 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) 'string' \"string2\" // endline", list3[0].Text, "code 3 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) 'string' {pragma} \"string2\"", list4[0].Text, "code 4 differs from input");
+			Assert.AreEqual("iInt := 5; (* comment *) 'string' {pragma} // endline", list5[0].Text, "code 5 differs from input");
 		}
 		[TestMethod]
 		public void Should_returnListWithThreeElements_When_splitCalledOnCodeWithSpecialSegmentInside()
@@ -114,7 +119,7 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual(3, list2.Count, "list 2 is not length 3");
 
 			Assert.AreEqual(SegmentType.Code, list1[0].SegmentType, "code 1 segment 0 type is not code");
-			Assert.AreEqual(SegmentType.StringLiteral, list1[1].SegmentType, "code 1 segment 1 type is not StringLiteral");
+			Assert.AreEqual(SegmentType.StringLiteralSingleQuote, list1[1].SegmentType, "code 1 segment 1 type is not StringLiteral");
 			Assert.AreEqual(SegmentType.Code, list1[2].SegmentType, "code 1 segment 2 type is not code");
 
 			Assert.AreEqual(SegmentType.Code, list2[0].SegmentType, "code 2 segment type is not code");

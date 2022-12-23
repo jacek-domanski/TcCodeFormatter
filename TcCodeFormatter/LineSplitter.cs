@@ -200,7 +200,8 @@ namespace TcCodeFormatter
 			return new Dictionary<SegmentType, SpecialSegment>
 				{
 					{ SegmentType.MultilineComment, new SpecialSegment("(*", "*)") },
-					{ SegmentType.StringLiteral, new SpecialSegment("'", "'") },
+					{ SegmentType.StringLiteralSingleQuote, new SpecialSegment("'", "'") },
+					{ SegmentType.StringLiteralDoubleQuote, new SpecialSegment("\"", "\"") },
 					{ SegmentType.Pragma, new SpecialSegment("{", "}") },
 					{ SegmentType.EndlineComment, new SpecialSegment("//", "\n") }
 				};

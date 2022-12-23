@@ -8,7 +8,8 @@ namespace TcCodeFormatter
 		Code,
 		MultilineComment,
 		EndlineComment,
-		StringLiteral,
+		StringLiteralSingleQuote,
+		StringLiteralDoubleQuote,
 		Pragma
 	}
 
