@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TcCodeFormatter;
-using Moq;
 
 namespace TcCodeFormatterTests
 {
