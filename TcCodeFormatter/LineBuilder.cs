@@ -8,8 +8,10 @@ namespace TcCodeFormatter
 {
 	public class LineBuilder
 	{
+		private string line;
 		public LineBuilder()
 		{
+			this.line = "";
 		}
 
 		public void reset()
