@@ -26,7 +26,7 @@ namespace TcCodeFormatter
 
 		public string getLine()
 		{
-			return "";
+			return this.line;
 		}
 	}
 }
