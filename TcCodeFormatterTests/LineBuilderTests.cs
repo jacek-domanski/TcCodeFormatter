@@ -227,5 +227,20 @@ namespace TcCodeFormatterTests
 			string expected = "// text";
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_NotPutSpaceAfterQuotationMark_When_CodeIsNext()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("a", SegmentType.StringLiteralSingleQuote));
+			lineBuilder.append(new CodeLineSegment(";", SegmentType.Code));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "'a';";
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
