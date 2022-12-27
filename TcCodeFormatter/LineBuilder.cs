@@ -150,5 +150,10 @@ namespace TcCodeFormatter
 
 			if (appendSpace) this.line += " ";
 		}
+
+		private string trimmed(string text)
+		{
+			return text.TrimStart().TrimEnd();
+		}
 	}
 }
