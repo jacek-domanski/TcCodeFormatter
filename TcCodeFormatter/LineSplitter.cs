@@ -51,7 +51,7 @@ namespace TcCodeFormatter
 			int specialSegmentStartIndex;
 			SegmentType specialSegmentType;
 
-			if (segmentContinuouesFromPreviousLine())
+			if (segmentStartsInCurrentLine())
 			{
 				findOutIfSegmentContainsSpecialSegments(segmentText, specialSegments);
 
@@ -77,7 +77,7 @@ namespace TcCodeFormatter
 			SegmentType specialSegmentType)
 		{
 			CodeLineSegment code, specialSegment, unknown = null;
-			bool bEndNotFound = false;
+			bool endNotFound = false;
 			switch (specialSegmentType)
 			{
 				case SegmentType.Code:
@@ -99,20 +99,11 @@ namespace TcCodeFormatter
 					break;
 
 				default:
-					int specialSegmentEndIndex =
-							segmentText.IndexOf(
-								specialSegments[specialSegmentType].end, 
-								specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
-							);
+					int specialSegmentEndIndex = getSpecialSegmentEndIndex(segmentText, specialSegments, specialSegmentStartIndex, specialSegmentType);
 
 					code = AddCodeSegment(segmentText, specialSegmentStartIndex);
-
-					int specialSegmentContentStartIndex = specialSegmentStartIndex;
-					if (this.multilineSegment == SegmentType.Unkown)
-					{
-						specialSegmentContentStartIndex +=
-							specialSegments[specialSegmentType].start.Length;
-					}
+					int specialSegmentContentStartIndex =
+						getSpecialSegmentContentStartIndex(specialSegments, specialSegmentStartIndex, specialSegmentType);
 
 					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex <= specialSegmentStartIndex)
 					{
@@ -120,17 +111,15 @@ namespace TcCodeFormatter
 							new CodeLineSegment(
 								segmentText.Substring(specialSegmentContentStartIndex),
 								specialSegmentType,
-								segmentContinuouesFromPreviousLine(),
+								segmentStartsInCurrentLine(),
 								false
 							);
 						this.multilineSegment = specialSegmentType;
-						bEndNotFound = true;
+						endNotFound = true;
 					}
 					else
 					{
-						int specialSegmentContentLength =
-							specialSegmentEndIndex
-							- specialSegmentContentStartIndex;
+						int specialSegmentContentLength = specialSegmentEndIndex - specialSegmentContentStartIndex;
 
 						specialSegment =
 							new CodeLineSegment(
@@ -138,19 +127,12 @@ namespace TcCodeFormatter
 									specialSegmentContentStartIndex,
 									specialSegmentContentLength),
 								specialSegmentType,
-								segmentContinuouesFromPreviousLine(),
+								segmentStartsInCurrentLine(),
 								true
 							);
 
-						string unknownString = segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length);
-						if (unknownString.Length > 0)
-						{
-							unknown =
-								new CodeLineSegment(
-									unknownString,
-									SegmentType.Unkown
-								);
-						}
+						unknown = addRemainingUnknownSegment(
+							segmentText, specialSegments, specialSegmentType, unknown, specialSegmentEndIndex);
 					}
 					break;
 			}
@@ -158,10 +140,56 @@ namespace TcCodeFormatter
 			if (unknown != null) this.segments.Insert(segmentIndex, unknown);
 			this.segments.Insert(segmentIndex, specialSegment);
 			if (code != null) this.segments.Insert(segmentIndex, code);
-			if (!bEndNotFound) this.reset();
+			if (!endNotFound) this.reset();
 		}
 
-		private bool segmentContinuouesFromPreviousLine()
+		private static CodeLineSegment addRemainingUnknownSegment(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments, SegmentType specialSegmentType, CodeLineSegment unknown, int specialSegmentEndIndex)
+		{
+			string remainingUnknownString = segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length);
+			if (remainingUnknownString.Length > 0)
+			{
+				unknown =
+					new CodeLineSegment(
+						remainingUnknownString,
+						SegmentType.Unkown
+					);
+			}
+
+			return unknown;
+		}
+
+		private int getSpecialSegmentContentStartIndex(Dictionary<SegmentType, SpecialSegment> specialSegments, int specialSegmentStartIndex, SegmentType specialSegmentType)
+		{
+			int specialSegmentContentStartIndex = specialSegmentStartIndex;
+			if (segmentStartsInCurrentLine())
+			{
+				specialSegmentContentStartIndex +=
+					specialSegments[specialSegmentType].start.Length;
+			}
+
+			return specialSegmentContentStartIndex;
+		}
+
+		private static int getSpecialSegmentEndIndex(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments, int specialSegmentStartIndex, SegmentType specialSegmentType)
+		{
+			int specialSegmentEndIndex;
+			try
+			{
+				specialSegmentEndIndex =
+						segmentText.IndexOf(
+							specialSegments[specialSegmentType].end,
+							specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
+						);
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				specialSegmentEndIndex = -1;
+			}
+
+			return specialSegmentEndIndex;
+		}
+
+		private bool segmentStartsInCurrentLine()
 		{
 			return this.multilineSegment == SegmentType.Unkown;
 		}
