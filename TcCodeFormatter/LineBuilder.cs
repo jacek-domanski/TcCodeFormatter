@@ -73,14 +73,16 @@ namespace TcCodeFormatter
 			if (segment.HasStartMarker)
 			{
 				appendSpaceIfNoWhitespaceAtTheEnd();
-				line += "(* ";
+				line += "(*";
+				if (segment.Text.Length > 0) line += " ";
 			}
 
 			this.line += segment.Text;
 
 			if (segment.HasEndMarker)
 			{
-				line += " *)";
+				if (segment.Text.Length > 0) line += " ";
+				line += "*)";
 			}
 		}
 
