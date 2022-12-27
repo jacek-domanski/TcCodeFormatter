@@ -161,6 +161,9 @@ namespace TcCodeFormatterTests
 
 			Assert.AreEqual(SegmentType.MultilineComment, multilineSegmentField.GetValue(lineSplitter), "Segment type not set to MultilineComment");
 
+			Assert.IsTrue(list1[1].HasStartMarker);
+			Assert.IsFalse(list1[1].HasEndMarker);
+
 			// Act
 			List<CodeLineSegment> list2 = lineSplitter.split(code2);
 			// Assert
@@ -169,6 +172,9 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual("comment continues", list2[0].Text, "code 2 segment 0 differs from input");
 			Assert.AreEqual(SegmentType.MultilineComment, multilineSegmentField.GetValue(lineSplitter), "Segment type not set to MultilineComment");
 
+			Assert.IsFalse(list2[0].HasStartMarker);
+			Assert.IsFalse(list2[0].HasEndMarker);
+
 			// Act
 			List<CodeLineSegment> list3 = lineSplitter.split(code3);
 			// Assert
@@ -176,6 +182,9 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual(SegmentType.MultilineComment, list3[0].SegmentType, "code 3 segment 0 type is not MultilineComment");
 			Assert.AreEqual("comment ends ", list3[0].Text, "code 3 segment 0 differs from input");
 			Assert.AreEqual(SegmentType.Unkown, multilineSegmentField.GetValue(lineSplitter), "Segment type not reset to unknown");
+
+			Assert.IsFalse(list3[0].HasStartMarker);
+			Assert.IsTrue(list3[0].HasEndMarker);
 		}
 	}
 }

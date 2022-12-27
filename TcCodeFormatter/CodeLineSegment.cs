@@ -17,15 +17,25 @@ namespace TcCodeFormatter
 	{
 		private string text;
 		private SegmentType segmentType;
+		private bool startMarker;
+		private bool endMarker;
 
-		public CodeLineSegment(string segment, SegmentType segmentType)
+		public CodeLineSegment(
+			string segment, 
+			SegmentType segmentType, 
+			bool hasStartMarker = true, 
+			bool hasEndMarker = true)
 		{
 			this.text = segment;
 			this.segmentType = segmentType;
+			this.startMarker = hasStartMarker;
+			this.endMarker = hasEndMarker;
 		}
 
 		public string Text { get => text;}
 		public SegmentType SegmentType { get => segmentType;}
+		public bool HasStartMarker { get => startMarker;}
+		public bool HasEndMarker { get => endMarker;}
 		public void convertUnknownTypeToCode()
 		{
 			if (this.segmentType != SegmentType.Unkown)
