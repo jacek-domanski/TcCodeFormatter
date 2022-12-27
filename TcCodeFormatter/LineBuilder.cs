@@ -90,7 +90,7 @@ namespace TcCodeFormatter
 		{
 			appendSpaceIfNoWhitespaceAtTheEnd();
 			this.line += "// ";
-			this.line += segment.Text;
+			this.line += trimmed(segment.Text);
 		}
 
 		private void appendStringLiteralSingleQuote(CodeLineSegment segment)

@@ -213,5 +213,19 @@ namespace TcCodeFormatterTests
 			string expected = "*)";
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_PutOnlyOneSpaceBetweenMarkerAndEndlineCommentText_When_EndlineCommentTextStartsWithSpace()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment(" text", SegmentType.EndlineComment, false, false));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "// text";
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
