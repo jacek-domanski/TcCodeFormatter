@@ -105,7 +105,7 @@ namespace TcCodeFormatter
 					int specialSegmentContentStartIndex =
 						getSpecialSegmentContentStartIndex(specialSegments, specialSegmentStartIndex, specialSegmentType);
 
-					if (specialSegmentEndIndex == -1 || specialSegmentEndIndex <= specialSegmentStartIndex)
+					if (specialSegmentEndIndex == -1)
 					{
 						specialSegment =
 							new CodeLineSegment(
@@ -170,16 +170,23 @@ namespace TcCodeFormatter
 			return specialSegmentContentStartIndex;
 		}
 
-		private static int getSpecialSegmentEndIndex(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments, int specialSegmentStartIndex, SegmentType specialSegmentType)
+		private int getSpecialSegmentEndIndex(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments, int specialSegmentStartIndex, SegmentType specialSegmentType)
 		{
 			int specialSegmentEndIndex;
 			try
 			{
-				specialSegmentEndIndex =
-						segmentText.IndexOf(
-							specialSegments[specialSegmentType].end,
-							specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
-						);
+				if (segmentStartsInCurrentLine())
+				{
+					specialSegmentEndIndex =
+							segmentText.IndexOf(
+								specialSegments[specialSegmentType].end,
+								specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
+							);
+				} else
+				{
+					specialSegmentEndIndex =
+							segmentText.IndexOf(specialSegments[specialSegmentType].end);
+				}
 			}
 			catch (ArgumentOutOfRangeException)
 			{
