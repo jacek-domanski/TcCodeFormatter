@@ -45,14 +45,13 @@ namespace TcCodeFormatter
 		}
 		private void splitUnknownSegment(int segmentIndex)
 		{
-			// TODO handle if already in special segment
 			string segmentText = this.segments[segmentIndex].Text;
 			Dictionary<SegmentType, SpecialSegment> specialSegments =
 				initializeSpecialSegments();
 			int specialSegmentStartIndex;
 			SegmentType specialSegmentType;
 
-			if (this.multilineSegment == SegmentType.Unkown)
+			if (segmentContinuouesFromPreviousLine())
 			{
 				findOutIfSegmentContainsSpecialSegments(segmentText, specialSegments);
 
@@ -120,7 +119,9 @@ namespace TcCodeFormatter
 						specialSegment =
 							new CodeLineSegment(
 								segmentText.Substring(specialSegmentContentStartIndex),
-								specialSegmentType
+								specialSegmentType,
+								segmentContinuouesFromPreviousLine(),
+								false
 							);
 						this.multilineSegment = specialSegmentType;
 						bEndNotFound = true;
@@ -136,7 +137,9 @@ namespace TcCodeFormatter
 								segmentText.Substring(
 									specialSegmentContentStartIndex,
 									specialSegmentContentLength),
-								specialSegmentType
+								specialSegmentType,
+								segmentContinuouesFromPreviousLine(),
+								true
 							);
 
 						string unknownString = segmentText.Substring(specialSegmentEndIndex + specialSegments[specialSegmentType].end.Length);
@@ -156,6 +159,11 @@ namespace TcCodeFormatter
 			this.segments.Insert(segmentIndex, specialSegment);
 			if (code != null) this.segments.Insert(segmentIndex, code);
 			if (!bEndNotFound) this.reset();
+		}
+
+		private bool segmentContinuouesFromPreviousLine()
+		{
+			return this.multilineSegment == SegmentType.Unkown;
 		}
 
 		private static CodeLineSegment AddCodeSegment(string segmentText, int specialSegmentStartIndex)
