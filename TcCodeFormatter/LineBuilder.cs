@@ -16,7 +16,7 @@ namespace TcCodeFormatter
 
 		public void reset()
 		{
-
+			this.line = "";
 		}
 
 		public void append(CodeLineSegment segment)
