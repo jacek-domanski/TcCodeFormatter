@@ -171,5 +171,47 @@ namespace TcCodeFormatterTests
 			string expected = "(* " + input1 + " *) " + input2;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_AddNoSpacesAroundMultilineCommentStart_When_TextIsEmpty()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("", SegmentType.MultilineComment, true, false));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "(*";
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_AddNoSpacesAroundMultilineCommentContent_When_TextIsEmpty()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("", SegmentType.MultilineComment, false, false));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "";
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_AddNoSpacesAroundMultilineCommentEnd_When_TextIsEmpty()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("", SegmentType.MultilineComment, false, true));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "*)";
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
