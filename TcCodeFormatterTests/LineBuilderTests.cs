@@ -3,7 +3,7 @@ using TcCodeFormatter;
 
 namespace TcCodeFormatterTests
 {
-	[TestClass]
+	// [TestClass]
 	public class LineBuilderTests
 	{
 		[TestMethod]
