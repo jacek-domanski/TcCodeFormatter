@@ -186,5 +186,39 @@ namespace TcCodeFormatterTests
 			Assert.IsFalse(list3[0].HasStartMarker);
 			Assert.IsTrue(list3[0].HasEndMarker);
 		}
+		[TestMethod]
+		public void Should_CorrectlyDetectMultilineSegment_When_splitCalledOnMultilineSegmentWithNoContent()
+		{
+			// Arrange
+			string code1 = "(*";
+			string code2 = "";
+			string code3 = "*)";
+
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> list1 = lineSplitter.split(code1);
+			List<CodeLineSegment> list2 = lineSplitter.split(code2);
+			List<CodeLineSegment> list3 = lineSplitter.split(code3);
+
+			// Assert
+			Assert.AreEqual(1, list1.Count);
+			Assert.AreEqual(SegmentType.MultilineComment, list1[0].SegmentType);
+			Assert.AreEqual("", list1[0].Text);
+			Assert.IsTrue(list1[0].HasStartMarker);
+			Assert.IsFalse(list1[0].HasEndMarker);
+
+			Assert.AreEqual(1, list2.Count);
+			Assert.AreEqual(SegmentType.MultilineComment, list2[0].SegmentType);
+			Assert.AreEqual("", list2[0].Text);
+			Assert.IsFalse(list2[0].HasStartMarker);
+			Assert.IsFalse(list2[0].HasEndMarker);
+
+			Assert.AreEqual(1, list3.Count);
+			Assert.AreEqual(SegmentType.MultilineComment, list3[0].SegmentType);
+			Assert.AreEqual("", list3[0].Text);
+			Assert.IsFalse(list3[0].HasStartMarker);
+			Assert.IsTrue(list3[0].HasEndMarker);
+		}
 	}
 }
