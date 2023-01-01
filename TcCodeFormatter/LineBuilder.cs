@@ -72,14 +72,21 @@ namespace TcCodeFormatter
 			{
 				appendSpaceIfNoWhitespaceAtTheEnd();
 				line += "(*";
-				if (segment.Text.Length > 0) line += " ";
+
+				bool startingSpace =
+					segment.Text.Length > 0
+					&& !segment.Text.StartsWith(" ");
+				if (startingSpace) line += " ";
 			}
 
 			this.line += segment.Text;
 
 			if (segment.HasEndMarker)
 			{
-				if (segment.Text.Length > 0) line += " ";
+				bool endingSpace =
+					segment.Text.Length > 0
+					&& !segment.Text.EndsWith(" ");
+				if (endingSpace) line += " ";
 				line += "*)";
 			}
 		}
