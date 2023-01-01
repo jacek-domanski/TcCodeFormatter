@@ -41,13 +41,8 @@ namespace TcCodeFormatter
 		}
 		static void getAllFilesPaths()
 		{
-			Console.WriteLine("Getting all files paths:");
 			string currentDirectory = System.IO.Directory.GetCurrentDirectory();
 			getAllFilesRecursively(currentDirectory);
-			foreach (string filePath in filesPaths)
-			{
-				Console.WriteLine(filePath);
-			}
 		}
 		static void getAllFilesRecursively(string directory)
 		{
