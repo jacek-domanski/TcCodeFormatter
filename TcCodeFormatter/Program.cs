@@ -28,10 +28,23 @@ namespace TcCodeFormatter
 		static void runOptions(Options options)
 		{
 			Console.WriteLine("Files: " + options.InputFiles.Count() + ", All: " + options.All + ", Diff: " + options.Diff);
+			if (options.InputFiles.Count() > 0)
+			{
+				throw new NotImplementedException("--files is not implemented yet");
+			} else if (options.Diff)
+			{
+				throw new NotImplementedException("--diff is not implemented yet");
+			}
+
 		}
-		static void handleParseError(IEnumerable<Error> errs)
+		static void handleParseError(IEnumerable<Error> errors)
 		{
-			Console.WriteLine("Parsing error");
+			Console.WriteLine("Parsing error:");
+			foreach (Error error in errors)
+			{
+				Console.WriteLine(error);
+			}
+			Environment.Exit(1);
 		}
 	}
 }
