@@ -242,5 +242,36 @@ namespace TcCodeFormatterTests
 			string expected = "'a';";
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_AddNoSpace_When_OpeningBracketIsFollowedByStringLiteral()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("str.append(", SegmentType.Code));
+			lineBuilder.append(new CodeLineSegment("_", SegmentType.StringLiteralSingleQuote));
+			lineBuilder.append(new CodeLineSegment(");", SegmentType.Code));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "str.append('_');";
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_AddNoSpace_When_MultilineCommentAlreadyStartsOrEndsWithSpace()
+		{
+			// Arrange
+			LineBuilder lineBuilder = new LineBuilder();
+			lineBuilder.append(new CodeLineSegment("iInt := 5;", SegmentType.Code));
+			lineBuilder.append(new CodeLineSegment(" comment ", SegmentType.MultilineComment));
+
+			// Act
+			string actual = lineBuilder.getLine();
+
+			// Assert
+			string expected = "iInt := 5; (* comment *)";
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
