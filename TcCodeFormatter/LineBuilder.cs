@@ -93,7 +93,7 @@ namespace TcCodeFormatter
 		{
 			if (segment.HasStartMarker)
 			{
-				appendSpaceIfNoWhitespaceAtTheEnd();
+				appendSpaceIfNoWhitespaceAtTheEnd(new[] { "(" });
 				line += "'";
 			}
 
@@ -108,7 +108,7 @@ namespace TcCodeFormatter
 		{
 			if (segment.HasStartMarker)
 			{
-				appendSpaceIfNoWhitespaceAtTheEnd();
+				appendSpaceIfNoWhitespaceAtTheEnd(new[] { "(" });
 				line += "\"";
 			}
 
@@ -134,12 +134,23 @@ namespace TcCodeFormatter
 				line += "}";
 			}
 		}
-		private void appendSpaceIfNoWhitespaceAtTheEnd()
+		private void appendSpaceIfNoWhitespaceAtTheEnd(string[] stringsToNotAddSpaceAfter = null)
 		{
 			bool appendSpace =
 				!this.line.EndsWith(" ")
 				&& !this.line.EndsWith("\t")
 				&& this.line.Length > 0;
+
+			if (appendSpace && stringsToNotAddSpaceAfter != null) 
+			{ 
+				foreach(string str in stringsToNotAddSpaceAfter) 
+				{
+					if (this.line.EndsWith(str) && !String.IsNullOrEmpty(str))
+					{
+						return;
+					}
+				}
+			}
 
 			if (appendSpace) this.line += " ";
 		}
