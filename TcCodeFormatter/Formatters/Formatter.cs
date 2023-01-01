@@ -7,7 +7,7 @@ namespace TcCodeFormatter
 {
 	abstract class Formatter
 	{
-		private const string ENDLINE = "\n";
+		private const string ENDLINE = "\r\n";
 		private LineSplitter lineSplitter;
 		private LineBuilder lineBuilder;
 
