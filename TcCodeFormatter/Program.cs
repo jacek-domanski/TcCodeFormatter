@@ -8,13 +8,13 @@ namespace TcCodeFormatter
 {
 	class Program
 	{
+		private static List<string> filesPaths = new List<string>();
+		private static readonly string[] EXTENSIONS = new[] { ".TcPOU", ".TcGVL", ".TcDUT", ".TcIO" };
 		static void Main(string[] args)
 		{
 			CommandLine.Parser.Default.ParseArguments<Options>(args)
 				.WithParsed(runOptions)
 				.WithNotParsed(handleParseError);
-
-			string[] filesPaths = new[] { "C:\\Projects\\CSharp\\TcCodeFormatter\\POUs\\FB_StringBuilder.TcPOU" };
 
 			FileFormatter fileFormatter = null;
 
@@ -34,8 +34,41 @@ namespace TcCodeFormatter
 			} else if (options.Diff)
 			{
 				throw new NotImplementedException("--diff is not implemented yet");
+			} else if (options.All)
+			{
+				getAllFilesPaths();
+			}
+		}
+		static void getAllFilesPaths()
+		{
+			Console.WriteLine("Getting all files paths:");
+			string currentDirectory = System.IO.Directory.GetCurrentDirectory();
+			getAllFilesRecursively(currentDirectory);
+			foreach (string filePath in filesPaths)
+			{
+				Console.WriteLine(filePath);
+			}
+		}
+		static void getAllFilesRecursively(string directory)
+		{
+			string[] files = System.IO.Directory.GetFiles(directory);
+			foreach (string file in files)
+			{
+				foreach (string extension in EXTENSIONS)
+				{
+					if (file.EndsWith(extension))
+					{
+						filesPaths.Add(file);
+						break;
+					}
+				}
 			}
 
+			string[] subdirectories = System.IO.Directory.GetDirectories(directory);
+			foreach (string subdirectory in subdirectories)
+			{
+				getAllFilesRecursively(subdirectory);
+			}
 		}
 		static void handleParseError(IEnumerable<Error> errors)
 		{
