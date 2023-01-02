@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace TcCodeFormatter
 {
-	abstract class Formatter
+	public abstract class Formatter
 	{
 		private const string ENDLINE = "\r\n";
 		private LineSplitter lineSplitter;
@@ -27,6 +27,9 @@ namespace TcCodeFormatter
 			{
 				oldLineToNew(oldLine, newLines);
 			}
+
+			addEmptyLineAtTheEnd(newLines);
+
 			string innerText = string.Join(ENDLINE, newLines);
 			XmlCDataSection cData = node.OwnerDocument.CreateCDataSection(innerText);
 			node.InnerXml = cData.OuterXml;
@@ -56,6 +59,14 @@ namespace TcCodeFormatter
 			}
 
 			// formatting
+		}
+		private static void addEmptyLineAtTheEnd(List<string> newLines)
+		{
+			if (newLines.Last() != "")
+			{
+				Console.WriteLine("Added empty line at the end");
+				newLines.Add("");
+			}
 		}
 	}
 }

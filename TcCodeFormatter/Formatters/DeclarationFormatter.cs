@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace TcCodeFormatter
 {
-	class DeclarationFormatter : Formatter
+	public class DeclarationFormatter : Formatter
 	{
 		private static DeclarationFormatter instance = null;
 
