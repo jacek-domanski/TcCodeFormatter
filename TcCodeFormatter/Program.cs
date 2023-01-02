@@ -27,6 +27,9 @@ namespace TcCodeFormatter
 		}
 		static void runOptions(Options options)
 		{
+			Flags flags = Flags.Instance;
+			flags.setFlags(options);
+
 			Console.WriteLine("Files: " + options.InputFiles.Count() + ", All: " + options.All + ", Diff: " + options.Diff);
 			if (options.InputFiles.Count() > 0)
 			{
