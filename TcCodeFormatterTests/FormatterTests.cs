@@ -54,10 +54,35 @@ namespace TcCodeFormatterTests
 
 			// Act
 			formatter.run(node);
-			Console.WriteLine(node.InnerText);
 
 			// Assert
 			string expected = lines[0] + ENDLINE + lines[1] + ENDLINE;
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_DeleteEmptyLine_When_MoreThanOneInSuccession()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt := 5;");
+			lines.Add("");
+			lines.Add("");
+			lines.Add("iInt := 6;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				lines[0] + ENDLINE
+				+ lines[1] + ENDLINE
+				+ lines[3] + ENDLINE;
+
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
