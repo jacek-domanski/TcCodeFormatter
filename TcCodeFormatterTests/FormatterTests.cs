@@ -114,5 +114,29 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_DeleteEmptyLines_When_FirstLinesAreEmptyOrWhitespaceOnly()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("");
+			lines.Add("\t");
+			lines.Add(" ");
+			lines.Add("iInt := 6;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				lines[3] + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
