@@ -138,5 +138,21 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_NotThrowException_When_TextIsEmpty()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			Assert.IsTrue(true);
+		}
 	}
 }

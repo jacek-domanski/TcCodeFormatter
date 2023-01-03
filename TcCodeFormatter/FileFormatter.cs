@@ -11,6 +11,7 @@ namespace TcCodeFormatter
 		public FileFormatter(string filePath)
 		{
 			document.Load(filePath);
+			Functions.printIfVerbose("Loaded file: " + filePath);
 		}
 
 		public void formatCode()

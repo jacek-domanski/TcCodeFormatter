@@ -49,17 +49,14 @@ namespace TcCodeFormatter
 
 			if (isThisLineEmpty(segments))
 			{
-				if (lastLineWasEmpty || newLines.Count == 0)
+				if (lastLineWasEmpty || isThisLineFirst(newLines))
 				{
-					if (Flags.Instance.Verbose) Console.WriteLine("Removed empty line");
+					Functions.printIfVerbose("Removed empty line");
 					return;
 				}
 				lastLineWasEmpty = true;
 			}
-			else
-			{
-				lastLineWasEmpty = false;
-			}
+			else lastLineWasEmpty = false;
 
 			segments
 				.FindAll(x => x.SegmentType == SegmentType.Code)
@@ -69,6 +66,11 @@ namespace TcCodeFormatter
 			segments.ForEach(x => lineBuilder.append(x));
 
 			newLines.Add(this.lineBuilder.getLine());
+		}
+
+		private static bool isThisLineFirst(List<string> newLines)
+		{
+			return newLines.Count == 0;
 		}
 
 		private static bool isThisLineEmpty(List<CodeLineSegment> segments)
@@ -93,9 +95,9 @@ namespace TcCodeFormatter
 		}
 		private static void addEmptyLineAtTheEnd(List<string> newLines)
 		{
-			if (newLines.Last() != "")
+			if (newLines.Count == 0 || newLines.Last() != "")
 			{
-				if (Flags.Instance.Verbose) Console.WriteLine("Added empty line at the end");
+				Functions.printIfVerbose("Added empty line at the end");
 				newLines.Add("");
 			}
 		}
