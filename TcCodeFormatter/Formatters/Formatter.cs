@@ -49,7 +49,11 @@ namespace TcCodeFormatter
 
 			if (isThisLineEmpty(segments))
 			{
-				if (lastLineWasEmpty || newLines.Count == 0) return;
+				if (lastLineWasEmpty || newLines.Count == 0)
+				{
+					if (Flags.Instance.Verbose) Console.WriteLine("Removed empty line");
+					return;
+				}
 				lastLineWasEmpty = true;
 			}
 			else
@@ -91,7 +95,7 @@ namespace TcCodeFormatter
 		{
 			if (newLines.Last() != "")
 			{
-				Console.WriteLine("Added empty line at the end");
+				if (Flags.Instance.Verbose) Console.WriteLine("Added empty line at the end");
 				newLines.Add("");
 			}
 		}
