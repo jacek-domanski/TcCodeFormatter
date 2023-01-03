@@ -24,6 +24,7 @@ namespace TcCodeFormatter
 		}
 		public void run(XmlNode node)
 		{
+			lastLineWasEmpty = false;
 			string[] oldLines = splitNodeTextIntoLines(node);
 			List<string> newLines = new List<string>();
 
@@ -48,7 +49,7 @@ namespace TcCodeFormatter
 
 			if (isThisLineEmpty(segments))
 			{
-				if (lastLineWasEmpty) return;
+				if (lastLineWasEmpty || newLines.Count == 0) return;
 				lastLineWasEmpty = true;
 			}
 			else
