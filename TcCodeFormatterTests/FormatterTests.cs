@@ -179,5 +179,30 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_DeleteEmptyLine_When_EmptyLineIsBeforeEndVarInDeclaration()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt : INT;");
+			lines.Add("\t");
+			lines.Add(" ");
+			lines.Add("END_VAR");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				lines[0] + ENDLINE
+				+ lines[3] + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
