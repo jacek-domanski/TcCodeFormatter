@@ -23,5 +23,6 @@ namespace TcCodeFormatter
 				return instance;
 			}
 		}
+		protected override bool canNextLineBeEmpty(List<CodeLineSegment> segments) { return true; }
 	}
 }

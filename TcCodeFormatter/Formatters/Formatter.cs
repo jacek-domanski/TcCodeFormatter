@@ -14,6 +14,7 @@ namespace TcCodeFormatter
 		private LineBuilder lineBuilder;
 
 		private bool lastLineWasEmpty;
+		private bool nextLineCantBeEmpty;
 
 		public Formatter()
 		{
@@ -25,6 +26,8 @@ namespace TcCodeFormatter
 		public void run(XmlNode node)
 		{
 			lastLineWasEmpty = false;
+			nextLineCantBeEmpty = false;
+
 			string[] oldLines = splitNodeTextIntoLines(node);
 			List<string> newLines = new List<string>();
 
@@ -47,9 +50,14 @@ namespace TcCodeFormatter
 		{
 			List<CodeLineSegment> segments = this.lineSplitter.split(oldLine);
 
+			bool thisLineCantBeEmpty = 
+				nextLineCantBeEmpty 
+				|| lastLineWasEmpty 
+				|| isThisLineFirst(newLines);
+
 			if (isThisLineEmpty(segments))
 			{
-				if (lastLineWasEmpty || isThisLineFirst(newLines))
+				if (thisLineCantBeEmpty)
 				{
 					Functions.printIfVerbose("Removed empty line");
 					return;
@@ -61,6 +69,8 @@ namespace TcCodeFormatter
 			segments
 				.FindAll(x => x.SegmentType == SegmentType.Code)
 				.ForEach(x => formatCode(x));
+
+			nextLineCantBeEmpty = !canNextLineBeEmpty(segments);
 
 			this.lineBuilder.reset();
 			segments.ForEach(x => lineBuilder.append(x));
@@ -93,6 +103,7 @@ namespace TcCodeFormatter
 
 			// formatting
 		}
+		protected abstract bool canNextLineBeEmpty(List<CodeLineSegment> segments);
 		private static void addEmptyLineAtTheEnd(List<string> newLines)
 		{
 			if (newLines.Count == 0 || newLines.Last() != "")
