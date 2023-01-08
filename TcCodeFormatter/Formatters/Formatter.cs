@@ -84,6 +84,7 @@ namespace TcCodeFormatter
 			while (prevOrNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
 			{
 				newLines.RemoveAt(newLines.Count - 1);
+				Functions.printIfVerbose("Removed empty line before keyword");
 			}
 		}
 
