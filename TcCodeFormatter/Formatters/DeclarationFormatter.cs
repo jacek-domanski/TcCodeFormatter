@@ -24,12 +24,12 @@ namespace TcCodeFormatter
 				return instance;
 			}
 		}
-		protected override bool canNextLineBeEmpty(List<CodeLineSegment> segments)
+		protected override bool canPrevOrNextLineBeEmpty(List<CodeLineSegment> segments)
 		{ 
 			foreach(CodeLineSegment segment in segments)
 			{
 				if (segment.SegmentType != SegmentType.Code) continue;
-				if (Regexes.declarationNoEmptyLineAfter.IsMatch(segment.Text)) return false;
+				if (Regexes.declarationNoEmptyLineBeforeOrAfter.IsMatch(segment.Text)) return false;
 			}
 			return true;
 		}
