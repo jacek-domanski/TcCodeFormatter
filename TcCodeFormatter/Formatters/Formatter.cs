@@ -100,6 +100,18 @@ namespace TcCodeFormatter
 			}
 
 			codeSegment.Text = codeSegment.Text.Replace(":=", " := ");
+			codeSegment.Text = Regexes.referenceAssignment.Replace(codeSegment.Text, " REF= ");
+			codeSegment.Text = Regexes.equalButNotSimilar.Replace(codeSegment.Text, " = ");
+
+			codeSegment.Text = codeSegment.Text.Replace(">=", " >= ");
+			codeSegment.Text = Regexes.lesserButNotSimilar.Replace(codeSegment.Text, " < ");
+
+			codeSegment.Text = codeSegment.Text.Replace("<=", " <= ");
+			codeSegment.Text = Regexes.greaterButNotSimilar.Replace(codeSegment.Text, " > ");
+
+			codeSegment.Text = codeSegment.Text.Replace("<>", " <> ");
+			codeSegment.Text = Regexes.commaMidline.Replace(codeSegment.Text, ", ");
+			
 			codeSegment.Text = Regexes.whitespacesButNotAtTheStart.Replace(codeSegment.Text, " ");
 		}
 		protected abstract bool canPrevOrNextLineBeEmpty(List<CodeLineSegment> segments);
