@@ -204,5 +204,83 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_AddSpacesAroundAssignmentOperator_When_NoSpacesAround()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt:=5;");
+			lines.Add("iInt :=5;");
+			lines.Add("iInt:= 5;");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_RemoveExtraWhitespacesAroundAssignmentOperator_When_MoreThanOneSpaceEachSide()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt		 := 5;");
+			lines.Add("iInt :=		5;");
+			lines.Add("iInt	 	 :=	  5;");
+			lines.Add("iInt						 := 5;");
+			lines.Add("iInt :=						5;");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_NotAddSpaceAfterAssignmentOperator_When_AssignmentOperatorIsLast()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt :=");
+			lines.Add("5;");
+			lines.Add("iInt := // comment");
+			lines.Add("5;");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"iInt :=" + ENDLINE
+				+ "5;" + ENDLINE
+				+ "iInt := // comment" + ENDLINE
+				+ "5;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
