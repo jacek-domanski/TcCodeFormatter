@@ -78,21 +78,10 @@ namespace TcCodeFormatter
 
 			newLines.Add(this.lineBuilder.getLine());
 		}
-
-		private void removePreviousLineIfEmpty(List<string> newLines)
-		{
-			while (prevOrNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
-			{
-				newLines.RemoveAt(newLines.Count - 1);
-				Functions.printIfVerbose("Removed empty line before keyword");
-			}
-		}
-
 		private static bool isThisLineFirst(List<string> newLines)
 		{
 			return newLines.Count == 0;
 		}
-
 		private static bool isThisLineEmpty(List<CodeLineSegment> segments)
 		{
 			bool textIsEmptyOrWhitespace = 
@@ -103,7 +92,6 @@ namespace TcCodeFormatter
 				&& segments[0].SegmentType == SegmentType.Code 
 				&& textIsEmptyOrWhitespace;
 		}
-
 		private void formatCode(CodeLineSegment codeSegment)
 		{
 			if (codeSegment.SegmentType != SegmentType.Code)
@@ -120,6 +108,14 @@ namespace TcCodeFormatter
 			{
 				Functions.printIfVerbose("Added empty line at the end");
 				newLines.Add("");
+			}
+		}
+		private void removePreviousLineIfEmpty(List<string> newLines)
+		{
+			while (prevOrNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
+			{
+				newLines.RemoveAt(newLines.Count - 1);
+				Functions.printIfVerbose("Removed empty line before keyword");
 			}
 		}
 	}
