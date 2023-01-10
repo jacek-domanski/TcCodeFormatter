@@ -99,7 +99,8 @@ namespace TcCodeFormatter
 				throw new ArgumentException("Segment to be formatted as code is not code");
 			}
 
-			// formatting
+			codeSegment.Text = codeSegment.Text.Replace(":=", " := ");
+			codeSegment.Text = Regexes.whitespacesButNotAtTheStart.Replace(codeSegment.Text, " ");
 		}
 		protected abstract bool canPrevOrNextLineBeEmpty(List<CodeLineSegment> segments);
 		private static void addEmptyLineAtTheEnd(List<string> newLines)

@@ -32,7 +32,7 @@ namespace TcCodeFormatter
 			this.endMarker = hasEndMarker;
 		}
 
-		public string Text { get => text;}
+		public string Text { get => text; set => text = value;  }
 		public SegmentType SegmentType { get => segmentType;}
 		public bool HasStartMarker { get => startMarker;}
 		public bool HasEndMarker { get => endMarker;}

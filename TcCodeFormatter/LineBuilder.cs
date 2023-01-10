@@ -51,7 +51,7 @@ namespace TcCodeFormatter
 		}
 		public string getLine()
 		{
-			return this.line;
+			return this.line.TrimEnd();
 		}
 		private void appendUnknown(CodeLineSegment segment)
 		{
