@@ -12,6 +12,9 @@ namespace TcCodeFormatter
 		private static readonly string[] EXTENSIONS = new[] { ".TcPOU", ".TcGVL", ".TcDUT", ".TcIO" };
 		static void Main(string[] args)
 		{
+			System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+			stopwatch.Start();
+
 			CommandLine.Parser.Default.ParseArguments<Options>(args)
 				.WithParsed(runOptions)
 				.WithNotParsed(handleParseError);
@@ -24,6 +27,9 @@ namespace TcCodeFormatter
 				fileFormatter.formatCode();
 				fileFormatter.save(filePath);
 			}
+
+			stopwatch.Stop();
+			Console.WriteLine("Formatted " + filesPaths.Count + " files in " + stopwatch.ElapsedMilliseconds + " ms");
 		}
 		static void runOptions(Options options)
 		{
