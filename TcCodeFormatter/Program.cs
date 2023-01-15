@@ -36,6 +36,11 @@ namespace TcCodeFormatter
 		}
 		static void runOptions(Options options)
 		{
+			if (!(options.All ^ options.Diff ^ options.InputFiles.Count() > 0))
+			{
+				Console.WriteLine("Exactly one argument of -a, -d, -f is required");
+				Environment.Exit(1);
+			}
 			Flags flags = Flags.Instance;
 			flags.setFlags(options);
 
