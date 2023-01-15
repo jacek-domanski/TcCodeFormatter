@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -46,7 +47,7 @@ namespace TcCodeFormatter
 			} 
 			else if (options.Diff)
 			{
-				throw new NotImplementedException("--diff is not implemented yet");
+				getChangedFiles();
 			} 
 			else if (options.All)
 			{
@@ -137,6 +138,57 @@ namespace TcCodeFormatter
 				}
 			}
 		}
+		static void getChangedFiles()
+		{
+			string changedFilesRelativePathsTextBlob = "";
+			try
+			{
+				changedFilesRelativePathsTextBlob = getChangedFilesRelativePaths();
+			} 
+			catch (System.ComponentModel.Win32Exception e)
+			{
+				Console.WriteLine("Git cannot be started");
+				Console.WriteLine(e);
+				Environment.Exit(1);
+			}
+
+
+			List<string> changedFilesRelativePaths = changedFilesRelativePathsTextBlob.Split('\n').ToList();
+			string currentDirectory = System.IO.Directory.GetCurrentDirectory().Replace('/', '\\');
+
+			changedFilesRelativePaths
+				.FindAll(filePath => filePath != "")
+				.ForEach(filePath => {
+					foreach (string extension in EXTENSIONS)
+					{
+						if (filePath.EndsWith(extension))
+						{
+							filesPaths.Add(currentDirectory + '\\' + filePath);
+							break;
+						}
+					}
+				});
+		}
+
+		private static string getChangedFilesRelativePaths()
+		{
+			ProcessStartInfo startInfo = new ProcessStartInfo("git.exe");
+
+			startInfo.UseShellExecute = false;
+			startInfo.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();
+			startInfo.RedirectStandardInput = true;
+			startInfo.RedirectStandardOutput = true;
+			startInfo.Arguments = "diff --name-only";
+
+			Process process = new Process();
+			process.StartInfo = startInfo;
+			process.Start();
+
+			string output = process.StandardOutput.ReadToEnd();
+			process.WaitForExit();
+			return output;
+		}
+
 		static void handleParseError(IEnumerable<Error> errors)
 		{
 			Console.WriteLine("Parsing error:");

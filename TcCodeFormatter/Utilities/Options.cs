@@ -19,7 +19,7 @@ namespace TcCodeFormatter
 		[Option('a', "all", Required = false, HelpText = "Searches current directory recursively, formats all known files found")]
 		public bool All { get; set; }
 
-		[Option('d', "diff", Required = false, HelpText = "Formats only files found by git diff --stat. Requires git installed")]
+		[Option('d', "diff", Required = false, HelpText = "Formats only files found by git diff --name-only. Requires git installed")]
 		public bool Diff { get; set; }
 
 		[Option('n', "no-confirmation", Required = false, HelpText = "No confirmation in --files mode is required. Should be used as -nf or -n -f")]
