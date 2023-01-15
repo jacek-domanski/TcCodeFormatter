@@ -13,7 +13,7 @@ namespace TcCodeFormatter
 		[Option('v', "verbose", Required = false, HelpText = "TcCodeFormatter becomes talkative")]
 		public bool Verbose { get; set; }
 
-		[Option('f', "files", Required = false, HelpText = "Input files to be formatted, separated by spaces. Current directory will be searched for matches. File extension is not necessary")]
+		[Option('f', "files", Required = false, HelpText = "Input files to be formatted, separated by spaces. Current directory will be searched for matches. Partial string will work, file extension is not necessary")]
 		public IEnumerable<string> InputFiles { get; set; }
 
 		[Option('a', "all", Required = false, HelpText = "Searches current directory recursively, formats all known files found")]
