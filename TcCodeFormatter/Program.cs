@@ -38,7 +38,7 @@ namespace TcCodeFormatter
 			Flags flags = Flags.Instance;
 			flags.setFlags(options);
 
-			Console.WriteLine("Files: " + options.InputFiles.Count() + ", All: " + options.All + ", Diff: " + options.Diff);
+			Console.WriteLine("Files: " + options.InputFiles.Count() + ", All: " + options.All + ", Diff: " + options.Diff + ", No confirmation: " + options.NoConfirmation);
 			if (options.InputFiles.Count() > 0)
 			{
 				getAllFilesPaths();
@@ -104,6 +104,12 @@ namespace TcCodeFormatter
 			{
 				Console.WriteLine("No matching files found");
 				Environment.Exit(0);
+				return;
+			}
+
+			if (options.NoConfirmation)
+			{
+				filesPaths = requestedFilesPaths;
 				return;
 			}
 
