@@ -282,5 +282,61 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_DeleteEmptyLine_When_EmptyLineIsAfterOpeningBracket()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("function(");
+			lines.Add("\t");
+			lines.Add(" ");
+			lines.Add("5");
+			lines.Add(");");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				lines[0] + ENDLINE
+				+ lines[3] + ENDLINE
+				+ lines[4] + ENDLINE
+				+ lines[5] + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_DeleteEmptyLine_When_EmptyLineIsBeforeClosingBracket()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("function(");
+			lines.Add("5");
+			lines.Add("\t");
+			lines.Add(" ");
+			lines.Add(");");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				lines[0] + ENDLINE
+				+ lines[1] + ENDLINE
+				+ lines[4] + ENDLINE
+				+ lines[5] + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
