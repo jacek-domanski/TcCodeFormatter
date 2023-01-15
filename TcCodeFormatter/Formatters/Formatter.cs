@@ -14,7 +14,8 @@ namespace TcCodeFormatter
 		private LineBuilder lineBuilder;
 
 		private bool lastLineWasEmpty;
-		private bool prevOrNextLineCantBeEmpty;
+		private bool prevAndNextLineCantBeEmpty;
+		private bool nextLineCantBeEmpty;
 
 		public Formatter()
 		{
@@ -26,7 +27,8 @@ namespace TcCodeFormatter
 		public void run(XmlNode node)
 		{
 			lastLineWasEmpty = false;
-			prevOrNextLineCantBeEmpty = false;
+			prevAndNextLineCantBeEmpty = false;
+			nextLineCantBeEmpty = false;
 
 			string[] oldLines = splitNodeTextIntoLines(node);
 			List<string> newLines = new List<string>();
@@ -51,7 +53,8 @@ namespace TcCodeFormatter
 			List<CodeLineSegment> segments = this.lineSplitter.split(oldLine);
 
 			bool thisLineCantBeEmpty =
-				prevOrNextLineCantBeEmpty
+				prevAndNextLineCantBeEmpty
+				|| nextLineCantBeEmpty
 				|| lastLineWasEmpty
 				|| isThisLineFirst(newLines);
 
@@ -70,7 +73,8 @@ namespace TcCodeFormatter
 				.FindAll(x => x.SegmentType == SegmentType.Code)
 				.ForEach(x => formatCode(x));
 
-			prevOrNextLineCantBeEmpty = !canPrevOrNextLineBeEmpty(segments);
+			prevAndNextLineCantBeEmpty = !canPrevOrNextLineBeEmpty(segments);
+			nextLineCantBeEmpty = !canNextLineBeEmpty(segments);
 			removePreviousLineIfEmpty(newLines);
 
 			this.lineBuilder.reset();
@@ -115,6 +119,22 @@ namespace TcCodeFormatter
 			codeSegment.Text = Regexes.whitespacesButNotAtTheStart.Replace(codeSegment.Text, " ");
 		}
 		protected abstract bool canPrevOrNextLineBeEmpty(List<CodeLineSegment> segments);
+
+		private bool canNextLineBeEmpty(List<CodeLineSegment> segments)
+		{
+			CodeLineSegment lastCodeSegment = null;
+
+			foreach (CodeLineSegment segment in segments)
+			{
+				if (segment.SegmentType == SegmentType.Code) lastCodeSegment = segment;
+			}
+
+			if (lastCodeSegment != null)
+			{
+				return !Regexes.endsWithOpeningBracket.IsMatch(lastCodeSegment.Text);
+			}
+			return true;
+		}
 		private static void addEmptyLineAtTheEnd(List<string> newLines)
 		{
 			if (newLines.Count == 0 || newLines.Last() != "")
@@ -125,7 +145,7 @@ namespace TcCodeFormatter
 		}
 		private void removePreviousLineIfEmpty(List<string> newLines)
 		{
-			while (prevOrNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
+			while (prevAndNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
 			{
 				newLines.RemoveAt(newLines.Count - 1);
 				Functions.printIfVerbose("Removed empty line before keyword");

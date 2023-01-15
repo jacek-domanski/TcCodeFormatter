@@ -304,8 +304,7 @@ namespace TcCodeFormatterTests
 			string expected =
 				lines[0] + ENDLINE
 				+ lines[3] + ENDLINE
-				+ lines[4] + ENDLINE
-				+ lines[5] + ENDLINE;
+				+ lines[4] + ENDLINE;
 
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
@@ -332,8 +331,7 @@ namespace TcCodeFormatterTests
 			string expected =
 				lines[0] + ENDLINE
 				+ lines[1] + ENDLINE
-				+ lines[4] + ENDLINE
-				+ lines[5] + ENDLINE;
+				+ lines[4] + ENDLINE;
 
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);

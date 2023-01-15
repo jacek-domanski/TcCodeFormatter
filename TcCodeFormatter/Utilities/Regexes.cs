@@ -20,5 +20,7 @@ namespace TcCodeFormatter.Utilities
 		public static Regex referenceAssignment = new Regex(@"(^|\s)REF=");
 		public static Regex whitespacesButNotAtTheStart = new Regex(@"(?<=[^\s])\s+");
 		public static Regex commaMidline = new Regex(@",(?! |$)");
+
+		public static Regex endsWithOpeningBracket = new Regex(@"\(|\[\s*$");
 	}
 }
