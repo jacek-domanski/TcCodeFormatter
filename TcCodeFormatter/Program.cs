@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using CommandLine;
+using TcCodeFormatter.Utilities;
 
 namespace TcCodeFormatter
 {
@@ -13,11 +15,11 @@ namespace TcCodeFormatter
 		static void Main(string[] args)
 		{
 			System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-			stopwatch.Start();
 
 			CommandLine.Parser.Default.ParseArguments<Options>(args)
 				.WithParsed(runOptions)
 				.WithNotParsed(handleParseError);
+			stopwatch.Start();
 
 			FileFormatter fileFormatter = null;
 
@@ -39,11 +41,14 @@ namespace TcCodeFormatter
 			Console.WriteLine("Files: " + options.InputFiles.Count() + ", All: " + options.All + ", Diff: " + options.Diff);
 			if (options.InputFiles.Count() > 0)
 			{
-				throw new NotImplementedException("--files is not implemented yet");
-			} else if (options.Diff)
+				getAllFilesPaths();
+				pickOnlyRequestedFiles(options);
+			} 
+			else if (options.Diff)
 			{
 				throw new NotImplementedException("--diff is not implemented yet");
-			} else if (options.All)
+			} 
+			else if (options.All)
 			{
 				getAllFilesPaths();
 			}
@@ -72,6 +77,58 @@ namespace TcCodeFormatter
 			foreach (string subdirectory in subdirectories)
 			{
 				getAllFilesRecursively(subdirectory);
+			}
+		}
+		static void pickOnlyRequestedFiles(Options options)
+		{
+			List<string> requestedFilesPaths = new List<string>();
+			List<Regex> regexes = new List<Regex>();
+			foreach (string reqestedFileNames in options.InputFiles)
+			{
+				regexes.Add(new Regex(reqestedFileNames, RegexOptions.IgnoreCase));
+			}
+
+			foreach (string filePath in filesPaths)
+			{
+				foreach(Regex regex in regexes)
+				{
+					if (regex.IsMatch(filePath))
+					{
+						requestedFilesPaths.Add(filePath);
+						break;
+					}
+				}
+			}
+
+			if (requestedFilesPaths.Count == 0)
+			{
+				Console.WriteLine("No matching files found");
+				Environment.Exit(0);
+				return;
+			}
+
+			while (true)
+			{
+				Console.WriteLine("Files to be formatted:");
+				requestedFilesPaths.ForEach(x => Console.WriteLine(x));
+				Console.WriteLine("Is that correct? (y/n)");
+				string response = Console.ReadLine().ToLower();
+
+				if (response == "y" || response == "yes")
+				{
+					filesPaths = requestedFilesPaths;
+					return;
+				}
+				else if (response == "n" || response == "no")
+				{
+					Console.WriteLine("No file was formatted");
+					Environment.Exit(0);
+					return;
+				}
+				else
+				{
+					Console.WriteLine();
+				}
 			}
 		}
 		static void handleParseError(IEnumerable<Error> errors)
