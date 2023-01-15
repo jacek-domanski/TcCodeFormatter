@@ -21,6 +21,7 @@ namespace TcCodeFormatter.Utilities
 		public static Regex whitespacesButNotAtTheStart = new Regex(@"(?<=[^\s])\s+");
 		public static Regex commaMidline = new Regex(@",(?! |$)");
 
-		public static Regex endsWithOpeningBracket = new Regex(@"\(|\[\s*$");
+		public static Regex endsWithOpeningBracket = new Regex(@"[\(|\[]\s*$");
+		public static Regex startsWithClosingBracket = new Regex(@"^\s*[\)|\]]");
 	}
 }

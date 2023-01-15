@@ -75,7 +75,7 @@ namespace TcCodeFormatter
 
 			prevAndNextLineCantBeEmpty = !canPrevOrNextLineBeEmpty(segments);
 			nextLineCantBeEmpty = !canNextLineBeEmpty(segments);
-			removePreviousLineIfEmpty(newLines);
+			removePreviousLineIfEmpty(newLines, segments);
 
 			this.lineBuilder.reset();
 			segments.ForEach(x => lineBuilder.append(x));
@@ -143,13 +143,20 @@ namespace TcCodeFormatter
 				newLines.Add("");
 			}
 		}
-		private void removePreviousLineIfEmpty(List<string> newLines)
+		private void removePreviousLineIfEmpty(List<string> newLines, List<CodeLineSegment> segments)
 		{
-			while (prevAndNextLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
+			bool prevLineCantBeEmpty = prevAndNextLineCantBeEmpty || !canPrevLineBeEmpty(segments);
+			while (prevLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
 			{
 				newLines.RemoveAt(newLines.Count - 1);
 				Functions.printIfVerbose("Removed empty line before keyword");
 			}
+		}
+		private bool canPrevLineBeEmpty(List<CodeLineSegment> segments)
+		{
+			if (segments[0].SegmentType != SegmentType.Code) return true;
+
+			return !Regexes.startsWithClosingBracket.IsMatch(segments[0].Text);
 		}
 	}
 }
