@@ -336,5 +336,44 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_RemoveWhitespaces_When_WhitespacesBeforeSemicolon()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt := 5 ;");
+			lines.Add("iInt := 6 		;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected = "iInt := 5;" + ENDLINE + "iInt := 6;" + ENDLINE;
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_NotRemoveWhitespaces_When_WhitespacesBeforeSemicolonAtTheStartOfLine()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("     ;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected = lines[0] + ENDLINE;
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
