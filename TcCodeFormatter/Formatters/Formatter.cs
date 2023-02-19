@@ -117,6 +117,8 @@ namespace TcCodeFormatter
 			codeSegment.Text = Regexes.commaMidline.Replace(codeSegment.Text, ", ");
 			
 			codeSegment.Text = Regexes.whitespacesButNotAtTheStart.Replace(codeSegment.Text, " ");
+
+			codeSegment.Text = Regexes.whitespacesBeforeSemicolon.Replace(codeSegment.Text, "");
 		}
 		protected abstract bool canPrevOrNextLineBeEmpty(List<CodeLineSegment> segments);
 
