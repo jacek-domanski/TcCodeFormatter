@@ -172,18 +172,24 @@ namespace TcCodeFormatter
 
 		private int getSpecialSegmentEndIndex(string segmentText, Dictionary<SegmentType, SpecialSegment> specialSegments, int specialSegmentStartIndex, SegmentType specialSegmentType)
 		{
+			int startingIndex = 0;
 			if (segmentStartsInCurrentLine())
 			{
-				return
+				startingIndex = specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length;
+			}
+
+			int candidate;
+			do
+			{
+				candidate =
 						segmentText.IndexOf(
 							specialSegments[specialSegmentType].end,
-							specialSegmentStartIndex + specialSegments[specialSegmentType].start.Length
+							startingIndex
 						);
-			} else
-			{
-				return
-						segmentText.IndexOf(specialSegments[specialSegmentType].end);
-			}
+				startingIndex = candidate+1;
+			} while (candidate >= 1 && segmentText[candidate - 1] == '$');
+
+			return candidate;
 		}
 
 		private bool segmentStartsInCurrentLine()
