@@ -220,5 +220,37 @@ namespace TcCodeFormatterTests
 			Assert.IsFalse(list3[0].HasStartMarker);
 			Assert.IsTrue(list3[0].HasEndMarker);
 		}
+		[TestMethod]
+		public void Should_returnListWithThreeElements_When_splitCalledOnCodeWithSpecialSegmentWithEscapeCharactersInside()
+		{
+			// Arrange
+			string code1 = "sString := 'a$'b$'c';";
+			string code2 = "sString := \"a$\"b$\"c\";";
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> list1 = lineSplitter.split(code1);
+			List<CodeLineSegment> list2 = lineSplitter.split(code2);
+
+			// Assert
+			Assert.AreEqual(3, list1.Count, "list 1 is not length 3");
+			Assert.AreEqual(3, list2.Count, "list 2 is not length 3");
+
+			Assert.AreEqual(SegmentType.Code, list1[0].SegmentType, "code 1 segment 0 type is not code");
+			Assert.AreEqual(SegmentType.StringLiteralSingleQuote, list1[1].SegmentType, "code 1 segment 1 type is not StringLiteralSingleQuote");
+			Assert.AreEqual(SegmentType.Code, list1[2].SegmentType, "code 1 segment 2 type is not code");
+
+			Assert.AreEqual(SegmentType.Code, list2[0].SegmentType, "code 2 segment type is not code");
+			Assert.AreEqual(SegmentType.StringLiteralDoubleQuote, list2[1].SegmentType, "code 2 segment type is not StringLiteralDoubleQuote");
+			Assert.AreEqual(SegmentType.Code, list2[2].SegmentType, "code 2 segment type is not code");
+
+			Assert.AreEqual("sString := ", list1[0].Text, "code 1 segment 0 differs from input");
+			Assert.AreEqual("a$'b$'c", list1[1].Text, "code 1 segment 1 differs from input");
+			Assert.AreEqual(";", list1[2].Text, "code 1 segment 2 differs from input");
+
+			Assert.AreEqual("sString := ", list2[0].Text, "code 2 segment 0 differs from input");
+			Assert.AreEqual("a$\"b$\"c", list2[1].Text, "code 2 segment 1 differs from input");
+			Assert.AreEqual(";", list2[2].Text, "code 2 segment 2 differs from input");
+		}
 	}
 }
