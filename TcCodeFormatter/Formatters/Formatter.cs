@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Text.RegularExpressions;
 using TcCodeFormatter.Utilities;
+using TcCodeFormatter.Formatters;
 
 namespace TcCodeFormatter
 {
@@ -12,6 +13,7 @@ namespace TcCodeFormatter
 		private const string ENDLINE = "\r\n";
 		private LineSplitter lineSplitter;
 		private LineBuilder lineBuilder;
+		private IndentationFormatter indentationFormatter;
 
 		private bool lastLineWasEmpty;
 		private bool prevAndNextLineCantBeEmpty;
@@ -21,6 +23,7 @@ namespace TcCodeFormatter
 		{
 			this.lineSplitter = new LineSplitter();
 			this.lineBuilder = new LineBuilder();
+			this.indentationFormatter = new IndentationFormatter();
 
 			this.lineSplitter.reset();
 		}
@@ -51,6 +54,8 @@ namespace TcCodeFormatter
 		private void oldLineToNew(string oldLine, List<string> newLines)
 		{
 			List<CodeLineSegment> segments = this.lineSplitter.split(oldLine);
+
+			this.indentationFormatter.removeIndentations(segments);
 
 			bool thisLineCantBeEmpty =
 				prevAndNextLineCantBeEmpty
