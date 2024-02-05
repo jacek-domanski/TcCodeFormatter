@@ -375,5 +375,38 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_RemoveWhitespaces_When_WhitespacesAtLineBeggining()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add(" iInt := 5;");
+			lines.Add("  iInt := 5;");
+			lines.Add("\tiInt := 5;");
+			lines.Add("\t\tiInt := 5;");
+			lines.Add("  \tiInt := 5;");
+			lines.Add("\t  \tiInt := 5;");
+			lines.Add(" \t\t iInt := 5;");
+
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE
+				+ "iInt := 5;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+
+		}
 	}
 }
