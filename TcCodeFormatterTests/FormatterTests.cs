@@ -420,5 +420,18 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_InstantiateNewIndentationList_When_ResetIndentationsCalled()
+		{
+			// Arrange
+			IndentationFormatter indentationFormatter = new IndentationFormatter();
+			int expected = 5;
+			// Act
+			indentationFormatter.newIndentationsArray(expected);
+			int actual = indentationFormatter.IndentationsCount.Length;
+
+			// Assert
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
