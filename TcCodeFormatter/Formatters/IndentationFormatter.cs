@@ -7,9 +7,12 @@ using TcCodeFormatter.Utilities;
 
 namespace TcCodeFormatter.Formatters
 {
-	internal class IndentationFormatter
+	public class IndentationFormatter
 	{
+		private const string _indentation = "\t";
 		public IndentationFormatter() { }
+
+		public static string Indentation => _indentation;
 
 		public void removeIndentations(List<CodeLineSegment> segments)
 		{

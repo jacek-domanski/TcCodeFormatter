@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Xml;
 using TcCodeFormatter;
+using TcCodeFormatter.Formatters;
 
 namespace TcCodeFormatterTests
 {
@@ -9,6 +10,7 @@ namespace TcCodeFormatterTests
 	public class FormatterTests
 	{
 		private string ENDLINE = "\r\n";
+		private string INDENTATION = IndentationFormatter.Indentation;
 		public XmlNode linesToNode(List<string> lines)
 		{
 			string innerText = string.Join(ENDLINE, lines);
@@ -387,7 +389,36 @@ namespace TcCodeFormatterTests
 
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_IncreaseIndentation_When_WhitespacesAtLineBeggining()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("iInt := 5;");
+			lines.Add("IF bCondition THEN");
+			lines.Add("iInt := 5;");
+			lines.Add("iInt := 5;");
+			lines.Add("END_IF");
+			lines.Add("iInt := 5;");
 
+			XmlNode node = linesToNode(lines);
+			ImplementationFormatter formatter = ImplementationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"iInt := 5;" + ENDLINE
+				+ "IF bCondition THEN" + ENDLINE
+				+ INDENTATION + "iInt := 5;" + ENDLINE
+				+ INDENTATION + "iInt := 5;" + ENDLINE
+				+ "END_IF" + ENDLINE
+				+ "iInt := 5;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
 		}
 	}
 }
