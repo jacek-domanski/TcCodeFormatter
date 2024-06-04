@@ -375,5 +375,81 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_RemoveWhitespaces_When_TooManyWhitespacesAroundColon()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("bBool  : BOOL;");
+			lines.Add("bBool   : BOOL;");
+			lines.Add("bBool : BOOL;");
+			lines.Add("bBool :  BOOL;");
+			lines.Add("bBool :   BOOL;");
+			lines.Add("bBool   :   BOOL;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_AddWhitespaces_When_MissingWhitespacesAroundColon()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("bBool: BOOL;");
+			lines.Add("bBool :BOOL;");
+			lines.Add("bBool:BOOL;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE
+				+ "bBool : BOOL;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_NotAddWhitespaces_When_ColonInAssignmentOperatorFound()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("bBool : BOOL := TRUE;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected = "bBool : BOOL := TRUE;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
