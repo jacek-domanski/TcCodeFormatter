@@ -96,7 +96,7 @@ namespace TcCodeFormatter
 				&& segments[0].SegmentType == SegmentType.Code 
 				&& textIsEmptyOrWhitespace;
 		}
-		private void formatCode(CodeLineSegment codeSegment)
+		protected virtual void formatCode(CodeLineSegment codeSegment)
 		{
 			if (codeSegment.SegmentType != SegmentType.Code)
 			{

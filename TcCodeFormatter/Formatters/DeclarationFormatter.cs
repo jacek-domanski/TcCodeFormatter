@@ -33,5 +33,16 @@ namespace TcCodeFormatter
 			}
 			return true;
 		}
+		protected override void formatCode(CodeLineSegment codeSegment)
+		{
+			if (codeSegment.SegmentType != SegmentType.Code)
+			{
+				throw new ArgumentException("Segment to be formatted as code is not code");
+			}
+
+			codeSegment.Text = Regexes.colonNotInAssignment.Replace(codeSegment.Text, " : ");
+
+			base.formatCode(codeSegment);
+		}
 	}
 }

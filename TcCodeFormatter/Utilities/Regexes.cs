@@ -25,5 +25,6 @@ namespace TcCodeFormatter.Utilities
 		public static Regex startsWithClosingBracket = new Regex(@"^\s*[\)|\]]");
 
 		public static Regex whitespacesBeforeSemicolon = new Regex(@"(?<!^|\s)\s+(?=;)");
+		public static Regex colonNotInAssignment = new Regex(@":(?!=)");
 	}
 }
