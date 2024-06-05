@@ -451,5 +451,55 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_NotAddWhitespacesBeforeColon_When_CodeStartsWithColon()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add(":BOOL;");
+			lines.Add(" :BOOL;");
+			lines.Add("  :BOOL;");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				": BOOL;" + ENDLINE
+				+ " : BOOL;" + ENDLINE
+				+ "  : BOOL;" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
+		[TestMethod]
+		public void Should_NotAddWhitespacesAfterColon_When_CodeEndsWithColon()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("bBool :");
+			lines.Add("bBool : ");
+			lines.Add("bBool :  ");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected =
+				"bBool :" + ENDLINE
+				+ "bBool :" + ENDLINE
+				+ "bBool :" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
