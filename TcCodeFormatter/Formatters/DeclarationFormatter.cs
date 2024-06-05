@@ -40,7 +40,8 @@ namespace TcCodeFormatter
 				throw new ArgumentException("Segment to be formatted as code is not code");
 			}
 
-			codeSegment.Text = Regexes.colonNotInAssignment.Replace(codeSegment.Text, " : ");
+			codeSegment.Text = Regexes.colonNotInAssignment.Replace(codeSegment.Text, ": ");
+			codeSegment.Text = Regexes.colonButNotAsFirstCharacter.Replace(codeSegment.Text, " :");
 
 			base.formatCode(codeSegment);
 		}

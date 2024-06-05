@@ -26,5 +26,6 @@ namespace TcCodeFormatter.Utilities
 
 		public static Regex whitespacesBeforeSemicolon = new Regex(@"(?<!^|\s)\s+(?=;)");
 		public static Regex colonNotInAssignment = new Regex(@":(?!=)");
+		public static Regex colonButNotAsFirstCharacter = new Regex(@"(?<!\s|^):");
 	}
 }
