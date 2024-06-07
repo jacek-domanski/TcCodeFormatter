@@ -25,6 +25,9 @@ namespace TcCodeFormatter
 				allSegmentsKnown = continuouslySplitUnkownSegments();
 			}
 
+			this.segments[0].IsFirstSegmentInLine = true;
+			this.segments[^1].IsLastSegmentInLine = true;
+
 			return this.segments;
 		}
 		private bool continuouslySplitUnkownSegments()
