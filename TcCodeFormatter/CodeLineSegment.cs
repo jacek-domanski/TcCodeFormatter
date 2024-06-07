@@ -19,6 +19,8 @@ namespace TcCodeFormatter
 		private SegmentType segmentType;
 		private bool startMarker;
 		private bool endMarker;
+		private bool isFirstSegmentInLine;
+		private bool isLastSegmentInLine;
 
 		public CodeLineSegment(
 			string segment, 
@@ -36,6 +38,9 @@ namespace TcCodeFormatter
 		public SegmentType SegmentType { get => segmentType;}
 		public bool HasStartMarker { get => startMarker;}
 		public bool HasEndMarker { get => endMarker;}
+		public bool IsFirstSegmentInLine { get => isFirstSegmentInLine; set => isFirstSegmentInLine = value; }
+		public bool IsLastSegmentInLine { get => isLastSegmentInLine; set => isLastSegmentInLine = value; }
+
 		public void convertUnknownTypeToCode()
 		{
 			if (this.segmentType != SegmentType.Unkown)

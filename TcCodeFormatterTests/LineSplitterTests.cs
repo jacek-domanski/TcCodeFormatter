@@ -252,5 +252,56 @@ namespace TcCodeFormatterTests
 			Assert.AreEqual("a$\"b$\"c", list2[1].Text, "code 2 segment 1 differs from input");
 			Assert.AreEqual(";", list2[2].Text, "code 2 segment 2 differs from input");
 		}
+		[TestMethod]
+		public void Should_MarkFirstAndLastSegment_When_OnlyOneSegment()
+		{
+			// Arrange
+			string line = "sTmpPath := LEFT(sTmpPath, iSlashPlace );";
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> segments = lineSplitter.split(line);
+
+			// Assert
+			Assert.IsTrue(segments[0].IsFirstSegmentInLine);
+			Assert.IsTrue(segments[0].IsLastSegmentInLine);
+		}
+		[TestMethod]
+		public void Should_MarkFirstAndLastSegment_When_TwoSegments()
+		{
+			// Arrange
+			string line = "sTmpPath := LEFT(sTmpPath, iSlashPlace ); // comment";
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> segments = lineSplitter.split(line);
+
+			// Assert
+			Assert.IsTrue(segments[0].IsFirstSegmentInLine);
+			Assert.IsFalse(segments[0].IsLastSegmentInLine);
+
+			Assert.IsFalse(segments[1].IsFirstSegmentInLine);
+			Assert.IsTrue(segments[1].IsLastSegmentInLine);
+		}
+		[TestMethod]
+		public void Should_MarkFirstAndLastSegment_When_ThreeSegments()
+		{
+			// Arrange
+			string line = "sTmpPath := LEFT(sTmpPath, iSlashPlace (* -1 *) );";
+			LineSplitter lineSplitter = new LineSplitter();
+
+			// Act
+			List<CodeLineSegment> segments = lineSplitter.split(line);
+
+			// Assert
+			Assert.IsTrue(segments[0].IsFirstSegmentInLine);
+			Assert.IsFalse(segments[0].IsLastSegmentInLine);
+
+			Assert.IsFalse(segments[1].IsFirstSegmentInLine);
+			Assert.IsFalse(segments[1].IsLastSegmentInLine);
+
+			Assert.IsFalse(segments[2].IsFirstSegmentInLine);
+			Assert.IsTrue(segments[2].IsLastSegmentInLine);
+		}
 	}
 }
