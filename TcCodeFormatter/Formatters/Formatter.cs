@@ -116,7 +116,14 @@ namespace TcCodeFormatter
 			codeSegment.Text = codeSegment.Text.Replace("<>", " <> ");
 			codeSegment.Text = Regexes.commaMidline.Replace(codeSegment.Text, ", ");
 			
-			codeSegment.Text = Regexes.whitespacesButNotAtTheStart.Replace(codeSegment.Text, " ");
+			if (codeSegment.IsFirstSegmentInLine)
+			{
+				codeSegment.Text = Regexes.whitespacesNotAtTheStart.Replace(codeSegment.Text, " ");
+			}
+			else
+			{
+				codeSegment.Text = Regexes.whitespaces.Replace(codeSegment.Text, " ");
+			}
 
 			codeSegment.Text = Regexes.whitespacesBeforeSemicolon.Replace(codeSegment.Text, "");
 		}

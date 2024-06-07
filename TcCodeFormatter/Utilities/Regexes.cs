@@ -18,7 +18,9 @@ namespace TcCodeFormatter.Utilities
 		public static Regex lesserButNotSimilar = new Regex(@"<(?!=|>)");
 		public static Regex greaterButNotSimilar = new Regex(@"(?<!<|=)>(?!=)");
 		public static Regex referenceAssignment = new Regex(@"(^|\s)REF=");
-		public static Regex whitespacesButNotAtTheStart = new Regex(@"(?<=[^\s])\s+");
+		public static Regex whitespacesAtTheStart = new Regex(@"(?<=^)\s+");
+		public static Regex whitespacesNotAtTheStart = new Regex(@"(?<=[^\s])\s+");
+		public static Regex whitespaces = new Regex(@"\s+");
 		public static Regex commaMidline = new Regex(@",(?! |$)");
 
 		public static Regex endsWithOpeningBracket = new Regex(@"[\(|\[]\s*$");

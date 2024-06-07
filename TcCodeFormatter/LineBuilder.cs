@@ -60,10 +60,10 @@ namespace TcCodeFormatter
 		private void appendCode(CodeLineSegment segment)
 		{
 			appendSpaceIfNoWhitespaceAtTheEnd();
-			if (this.line.EndsWith("\" ") || this.line.EndsWith("' "))
-			{
-				this.line = this.line.TrimEnd();
-			}
+
+			bool trimEnd = this.line.EndsWith("\" ") || this.line.EndsWith("' ") || (line.EndsWith(" ") && segment.Text.StartsWith(" "));
+			if (trimEnd) this.line = this.line.TrimEnd();
+
 			this.line += segment.Text;
 		}
 		private void appendMultilineComment(CodeLineSegment segment)
