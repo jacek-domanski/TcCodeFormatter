@@ -501,5 +501,25 @@ namespace TcCodeFormatterTests
 			string actual = node.InnerText;
 			Assert.AreEqual(expected, actual);
 		}
+		[TestMethod]
+		public void Should_RemoveRedundantSpaces_When_RedundantSpacesBetweenInlineCommentAndClosingBracket()
+		{
+			// Arrange
+			List<string> lines = new List<string>();
+			lines.Add("sTmpPath := LEFT(sTmpPath, iSlashPlace (* -1 *)         );");
+			lines.Add("");
+
+			XmlNode node = linesToNode(lines);
+			DeclarationFormatter formatter = DeclarationFormatter.Instance;
+
+			// Act
+			formatter.run(node);
+
+			// Assert
+			string expected = "sTmpPath := LEFT(sTmpPath, iSlashPlace (* -1 *) );" + ENDLINE;
+
+			string actual = node.InnerText;
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }
