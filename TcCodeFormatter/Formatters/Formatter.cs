@@ -32,10 +32,11 @@ namespace TcCodeFormatter
 
 			string[] oldLines = splitNodeTextIntoLines(node);
 			List<string> newLines = new List<string>();
+			List<List<CodeLineSegment>> newSegments = new();
 
 			foreach (string oldLine in oldLines)
 			{
-				oldLineToNew(oldLine, newLines);
+				oldLineToNew(oldLine, newLines, newSegments);
 			}
 
 			addEmptyLineAtTheEnd(newLines);
@@ -48,9 +49,9 @@ namespace TcCodeFormatter
 		{
 			return node.InnerText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 		}
-		private void oldLineToNew(string oldLine, List<string> newLines)
+		private void oldLineToNew(string oldLine, List<string> newLines, List<List<CodeLineSegment>> allSegments)
 		{
-			List<CodeLineSegment> segments = this.lineSplitter.split(oldLine);
+			List<CodeLineSegment> thisLineSegments = this.lineSplitter.split(oldLine);
 
 			bool thisLineCantBeEmpty =
 				prevAndNextLineCantBeEmpty
@@ -58,7 +59,7 @@ namespace TcCodeFormatter
 				|| lastLineWasEmpty
 				|| isThisLineFirst(newLines);
 
-			if (isThisLineEmpty(segments))
+			if (isThisLineEmpty(thisLineSegments))
 			{
 				if (thisLineCantBeEmpty)
 				{
@@ -69,16 +70,17 @@ namespace TcCodeFormatter
 			}
 			else lastLineWasEmpty = false;
 
-			segments
+			thisLineSegments
 				.FindAll(x => x.SegmentType == SegmentType.Code)
 				.ForEach(x => formatCode(x));
 
-			prevAndNextLineCantBeEmpty = !canPrevOrNextLineBeEmpty(segments);
-			nextLineCantBeEmpty = !canNextLineBeEmpty(segments);
-			removePreviousLineIfEmpty(newLines, segments);
+			prevAndNextLineCantBeEmpty = !canPrevOrNextLineBeEmpty(thisLineSegments);
+			nextLineCantBeEmpty = !canNextLineBeEmpty(thisLineSegments);
+			removePreviousLineIfEmpty(newLines, allSegments, thisLineSegments);
 
+			allSegments.Add(thisLineSegments);
 			this.lineBuilder.reset();
-			segments.ForEach(x => lineBuilder.append(x));
+			thisLineSegments.ForEach(x => lineBuilder.append(x));
 
 			newLines.Add(this.lineBuilder.getLine());
 		}
@@ -88,12 +90,12 @@ namespace TcCodeFormatter
 		}
 		private static bool isThisLineEmpty(List<CodeLineSegment> segments)
 		{
-			bool textIsEmptyOrWhitespace = 
+			bool textIsEmptyOrWhitespace =
 				segments[0].Text == "" || Regexes.whitespaceOnly.IsMatch(segments[0].Text);
 
-			return 
-				segments.Count == 1 
-				&& segments[0].SegmentType == SegmentType.Code 
+			return
+				segments.Count == 1
+				&& segments[0].SegmentType == SegmentType.Code
 				&& textIsEmptyOrWhitespace;
 		}
 		protected virtual void formatCode(CodeLineSegment codeSegment)
@@ -115,7 +117,7 @@ namespace TcCodeFormatter
 
 			codeSegment.Text = codeSegment.Text.Replace("<>", " <> ");
 			codeSegment.Text = Regexes.commaMidline.Replace(codeSegment.Text, ", ");
-			
+
 			if (codeSegment.IsFirstSegmentInLine)
 			{
 				codeSegment.Text = Regexes.whitespacesNotAtTheStart.Replace(codeSegment.Text, " ");
@@ -152,12 +154,13 @@ namespace TcCodeFormatter
 				newLines.Add("");
 			}
 		}
-		private void removePreviousLineIfEmpty(List<string> newLines, List<CodeLineSegment> segments)
+		private void removePreviousLineIfEmpty(List<string> newLines, List<List<CodeLineSegment>> allSegments, List<CodeLineSegment> thisLineSegments)
 		{
-			bool prevLineCantBeEmpty = prevAndNextLineCantBeEmpty || !canPrevLineBeEmpty(segments);
+			bool prevLineCantBeEmpty = prevAndNextLineCantBeEmpty || !canPrevLineBeEmpty(thisLineSegments);
 			while (prevLineCantBeEmpty && newLines.Count > 0 && Regexes.emptyOrWhitespaceOnly.IsMatch(newLines.Last()))
 			{
 				newLines.RemoveAt(newLines.Count - 1);
+				allSegments.RemoveAt(newLines.Count - 1);
 				Functions.printIfVerbose("Removed empty line before keyword");
 			}
 		}
